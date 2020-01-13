@@ -1,0 +1,293 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.1.987/W32 for MSP430           04/Dec/2018  11:06:27
+# Copyright 1996-2018 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\ADC.c
+#    Command line  =  
+#        -f C:\Users\Ahmed\AppData\Local\Temp\EW6756.tmp
+#        ("C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\ADC.c"
+#        -lC "C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List" -o "C:\Users\Ahmed\Desktop\Project 10- New
+#        Approach\Project 10\Debug\Obj" --no_cse --no_unroll --no_inline
+#        --no_code_motion --no_tbaa --debug -D__MSP430FR5994__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.0\430\lib\dlib\dl430xlsfn.h" --core=430X --data_model=small -On
+#        --multiplier=32 --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List\ADC.lst
+#    Object file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\Obj\ADC.r43
+#
+###############################################################################
+
+C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\ADC.c
+      1          #include  "msp430.h"
+
+   \                                 In  segment DATA16_AN, at 0x800
+   \   union <unnamed> _A_ADC12CTL0_L
+   \                     _A_ADC12CTL0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x802
+   \   union <unnamed> _A_ADC12CTL1_L
+   \                     _A_ADC12CTL1_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x804
+   \   union <unnamed> _A_ADC12CTL2_L
+   \                     _A_ADC12CTL2_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x806
+   \   union <unnamed> _A_ADC12CTL3_L
+   \                     _A_ADC12CTL3_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x812
+   \   union <unnamed> _A_ADC12IER0_L
+   \                     _A_ADC12IER0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x814
+   \   union <unnamed> _A_ADC12IER1_L
+   \                     _A_ADC12IER1_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x816
+   \   union <unnamed> _A_ADC12IER2_L
+   \                     _A_ADC12IER2_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x820
+   \   union <unnamed> _A_ADC12MCTL0_L
+   \                     _A_ADC12MCTL0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x822
+   \   union <unnamed> _A_ADC12MCTL1_L
+   \                     _A_ADC12MCTL1_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x824
+   \   union <unnamed> _A_ADC12MCTL2_L
+   \                     _A_ADC12MCTL2_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x826
+   \   union <unnamed> _A_ADC12MCTL3_L
+   \                     _A_ADC12MCTL3_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x828
+   \   union <unnamed> _A_ADC12MCTL4_L
+   \                     _A_ADC12MCTL4_L:
+   \   000000                DS8 2
+      2          #include  "functions.h"
+      3          #include  <string.h>
+      4          #include  "macros.h"
+      5          
+      6          
+
+   \                                 In  segment CODE, align 2
+      7          void Init_ADC(void){
+   \                     Init_ADC:
+      8          //------------------------------------------------------------------------------
+      9          // Configure ADC12
+     10          
+     11          // ADC10CTL0 Register Description
+     12            ADC12CTL0 = RESET_STATE;
+   \   000000   82430008     MOV.W   #0x0, &0x800
+     13            ADC12CTL0 |= ADC12SHT0_2;     // 16 ADC clocks
+   \   000004   B2D000020008 BIS.W   #0x200, &0x800
+     14            ADC12CTL0 |= ADC12SHT1_2;     // 16 ADC clocks
+   \   00000A   B2D000200008 BIS.W   #0x2000, &0x800
+     15            ADC12CTL0 |= ADC12MSC;        // First rising edge SHI signal triggers sampling timer
+   \   000010   B2D080000008 BIS.W   #0x80, &0x800
+     16            ADC12CTL0 |= ADC12ON;         // ADC12 on: turn on AtoD converter
+   \   000016   B2D010000008 BIS.W   #0x10, &0x800
+     17          
+     18          // ADC10CTL1 Register Description
+     19            ADC12CTL1 = RESET_STATE;
+   \   00001C   82430208     MOV.W   #0x0, &0x802
+     20            ADC12CTL1 |= ADC12PDIV_0;     // Predivide ADC12_B clock source by 1
+   \   000020   924202080208 MOV.W   &0x802, &0x802
+     21            ADC12CTL1 |= ADC12SHS_0;      // sample-and-hold source ADC12SC
+   \   000026   924202080208 MOV.W   &0x802, &0x802
+     22            ADC12CTL1 |= ADC12SHP;      // SAMPCON signal is sourced from the sampling timer.
+   \   00002C   B2D000020208 BIS.W   #0x200, &0x802
+     23            ADC12CTL1 |= ADC12ISSH_0;     // sample-input signal is not inverted
+   \   000032   924202080208 MOV.W   &0x802, &0x802
+     24            ADC12CTL1 |= ADC12DIV_0;      // / 1 clock divider
+   \   000038   924202080208 MOV.W   &0x802, &0x802
+     25            ADC12CTL1 |= ADC12SSEL0;      // ADC12OSC (MODOSC)
+   \   00003E   B2D20208     BIS.W   #0x8, &0x802
+     26            ADC12CTL1 |= ADC12CONSEQ_3;   // Repeat-sequence-of-channels
+   \   000042   B2D006000208 BIS.W   #0x6, &0x802
+     27          
+     28          // ADC12CTL2 Register Description
+     29            ADC12CTL2 = RESET_STATE;
+   \   000048   82430408     MOV.W   #0x0, &0x804
+     30            ADC12CTL2 |= ADC12RES_2;      // 12-bit conversion results / 14 clock cycle conversion
+   \   00004C   B2D020000408 BIS.W   #0x20, &0x804
+     31            ADC12CTL2 |= ADC12DF_0;       // Binary unsigned
+   \   000052   924204080408 MOV.W   &0x804, &0x804
+     32            ADC12CTL2 |= ADC12PWRMD_0;    // Regular power mode where sample rate is not restricted
+   \   000058   924204080408 MOV.W   &0x804, &0x804
+     33          
+     34          // ADC12CTL3 Register Description
+     35            ADC12CTL3 = RESET_STATE;
+   \   00005E   82430608     MOV.W   #0x0, &0x806
+     36            ADC12CTL3 |= ADC12ICH3MAP_0;  // external pin is selected for ADC input channel A26
+   \   000062   924206080608 MOV.W   &0x806, &0x806
+     37            ADC12CTL3 |= ADC12ICH2MAP_0;  // external pin is selected for ADC input channel A27
+   \   000068   924206080608 MOV.W   &0x806, &0x806
+     38            ADC12CTL3 |= ADC12ICH1MAP_0;  // external pin is selected for ADC input channel A28
+   \   00006E   924206080608 MOV.W   &0x806, &0x806
+     39            ADC12CTL3 |= ADC12ICH0MAP_0;  // external pin is selected for ADC input channel A29
+   \   000074   924206080608 MOV.W   &0x806, &0x806
+     40            ADC12CTL3 |= ADC12TCMAP_1;    // ADC internal temperature sensor ADC input channel A30
+   \   00007A   B2D080000608 BIS.W   #0x80, &0x806
+     41            ADC12CTL3 |= ADC12BATMAP_1;   // ADC internal 1/2 x AVCC is ADC input channel A31
+   \   000080   B2D040000608 BIS.W   #0x40, &0x806
+     42            ADC12CTL3 |= ADC12CSTARTADD_0; // 0h to 1Fh, corresponding to ADC12MEM0 to ADC12MEM31
+   \   000086   924206080608 MOV.W   &0x806, &0x806
+     43          
+     44          // ADC10MCTL0 Register Description
+     45            ADC12MCTL0 = RESET_STATE;
+   \   00008C   82432008     MOV.W   #0x0, &0x820
+     46            ADC12MCTL0 |= ADC12WINC_0;    // Comparator window disabled
+   \   000090   924220082008 MOV.W   &0x820, &0x820
+     47            ADC12MCTL0 |= ADC12DIF_0;     // Single-ended mode enabled
+   \   000096   924220082008 MOV.W   &0x820, &0x820
+     48            ADC12MCTL0 |= ADC12VRSEL_0;   // VR+ = AVCC, VR- = AVSS
+   \   00009C   924220082008 MOV.W   &0x820, &0x820
+     49            ADC12MCTL0 |= ADC12INCH_2;    // channel = A2 Thumb Wheel
+   \   0000A2   A2D32008     BIS.W   #0x2, &0x820
+     50          
+     51            ADC12MCTL1 = RESET_STATE;
+   \   0000A6   82432208     MOV.W   #0x0, &0x822
+     52            ADC12MCTL1 |= ADC12WINC_0;  // Comparator window disabled
+   \   0000AA   924222082208 MOV.W   &0x822, &0x822
+     53            ADC12MCTL1 |= ADC12DIF_0;   // Single-ended mode enabled
+   \   0000B0   924222082208 MOV.W   &0x822, &0x822
+     54            ADC12MCTL1 |= ADC12VRSEL_0; // VR+ = AVCC, VR- = AVSS
+   \   0000B6   924222082208 MOV.W   &0x822, &0x822
+     55            ADC12MCTL1 |= ADC12INCH_5;  // channel = A5 Left
+   \   0000BC   B2D005002208 BIS.W   #0x5, &0x822
+     56          
+     57            ADC12MCTL2 = RESET_STATE;
+   \   0000C2   82432408     MOV.W   #0x0, &0x824
+     58            ADC12MCTL2 |= ADC12WINC_0;  // Comparator window disabled
+   \   0000C6   924224082408 MOV.W   &0x824, &0x824
+     59            ADC12MCTL2 |= ADC12DIF_0;   // Single-ended mode enabled
+   \   0000CC   924224082408 MOV.W   &0x824, &0x824
+     60            ADC12MCTL2 |= ADC12VRSEL_0; // VR+ = AVCC, VR- = AVSS
+   \   0000D2   924224082408 MOV.W   &0x824, &0x824
+     61            ADC12MCTL2 |= ADC12INCH_4;  // channel = A4 Right
+   \   0000D8   A2D22408     BIS.W   #0x4, &0x824
+     62          
+     63            ADC12MCTL3 = RESET_STATE;
+   \   0000DC   82432608     MOV.W   #0x0, &0x826
+     64            ADC12MCTL3 |= ADC12WINC_0;  // Comparator window disabled
+   \   0000E0   924226082608 MOV.W   &0x826, &0x826
+     65            ADC12MCTL3 |= ADC12DIF_0;   // Single-ended mode enabled
+   \   0000E6   924226082608 MOV.W   &0x826, &0x826
+     66            ADC12MCTL3 |= ADC12VRSEL_0; // VR+ = AVCC, VR- = AVSS
+   \   0000EC   924226082608 MOV.W   &0x826, &0x826
+     67            ADC12MCTL3 |= ADC12INCH_30; // Temp sensor
+   \   0000F2   B2D01E002608 BIS.W   #0x1e, &0x826
+     68          
+     69            ADC12MCTL4 = RESET_STATE;
+   \   0000F8   82432808     MOV.W   #0x0, &0x828
+     70            ADC12MCTL4 |= ADC12WINC_0;  // Comparator window disabled
+   \   0000FC   924228082808 MOV.W   &0x828, &0x828
+     71            ADC12MCTL4 |= ADC12DIF_0;   // Single-ended mode enabled
+   \   000102   924228082808 MOV.W   &0x828, &0x828
+     72            ADC12MCTL4 |= ADC12VRSEL_0; // VR+ = AVCC, VR- = AVSS
+   \   000108   924228082808 MOV.W   &0x828, &0x828
+     73            ADC12MCTL4 |= ADC12INCH_31; // Battery voltage monitor
+   \   00010E   B2D01F002808 BIS.W   #0x1f, &0x828
+     74            ADC12MCTL4 |= ADC12EOS;     // End of Sequence
+   \   000114   B2D080002808 BIS.W   #0x80, &0x828
+     75          
+     76          // ADC12IER0-2 Register Descriptions
+     77            ADC12IER0 = RESET_STATE;    // Interrupts for channels  0 - 15
+   \   00011A   82431208     MOV.W   #0x0, &0x812
+     78            ADC12IER1 = RESET_STATE;    // Interrupts for channels 16 - 31
+   \   00011E   82431408     MOV.W   #0x0, &0x814
+     79            ADC12IER2 = RESET_STATE;    // Interrupts for ADC12RDYIE ADC12TOVIE ADC12OVIE
+   \   000122   82431608     MOV.W   #0x0, &0x816
+     80                                        // ADC12HIIE ADC12LOIE ADC12INIE
+     81          							  
+     82              //ADC12IER0 |= ADC12IE4;      // Generate Interrupt for MEM2 ADC Data load//
+     83             // ADC12IER0 |= ADC12IE2;    // Generate Interrupt for MEM2 ADC Data load
+     84             // ADC12IER0 |= ADC12IE0;    // Enable ADC conv complete interrupt
+     85          
+     86            ADC12CTL0 |= ADC12ENC;     // enable conversion
+   \   000126   A2D30008     BIS.W   #0x2, &0x800
+     87            ADC12CTL0 |= ADC12SC;      // Start sampling
+   \   00012A   92D30008     BIS.W   #0x1, &0x800
+     88          //------------------------------------------------------------------------------
+     89          }
+   \   00012E   1001         RETA
+   \   000130                REQUIRE _A_ADC12CTL0_L
+   \   000130                REQUIRE _A_ADC12CTL1_L
+   \   000130                REQUIRE _A_ADC12CTL2_L
+   \   000130                REQUIRE _A_ADC12CTL3_L
+   \   000130                REQUIRE _A_ADC12MCTL0_L
+   \   000130                REQUIRE _A_ADC12MCTL1_L
+   \   000130                REQUIRE _A_ADC12MCTL2_L
+   \   000130                REQUIRE _A_ADC12MCTL3_L
+   \   000130                REQUIRE _A_ADC12MCTL4_L
+   \   000130                REQUIRE _A_ADC12IER0_L
+   \   000130                REQUIRE _A_ADC12IER1_L
+   \   000130                REQUIRE _A_ADC12IER2_L
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   Init_ADC
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+     304  Init_ADC
+       2  _A_ADC12CTL0_L
+       2  _A_ADC12CTL1_L
+       2  _A_ADC12CTL2_L
+       2  _A_ADC12CTL3_L
+       2  _A_ADC12IER0_L
+       2  _A_ADC12IER1_L
+       2  _A_ADC12IER2_L
+       2  _A_ADC12MCTL0_L
+       2  _A_ADC12MCTL1_L
+       2  _A_ADC12MCTL2_L
+       2  _A_ADC12MCTL3_L
+       2  _A_ADC12MCTL4_L
+
+ 
+ 304 bytes in segment CODE
+  24 bytes in segment DATA16_AN
+ 
+ 304 bytes of CODE memory
+   0 bytes of DATA memory (+ 24 bytes shared)
+
+Errors: none
+Warnings: none

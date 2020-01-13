@@ -1,0 +1,206 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.1.987/W32 for MSP430           04/Dec/2018  11:06:28
+# Copyright 1996-2018 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\convert.c
+#    Command line  =  
+#        -f C:\Users\Ahmed\AppData\Local\Temp\EW6853.tmp
+#        ("C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\convert.c" -lC "C:\Users\Ahmed\Desktop\Project 10- New
+#        Approach\Project 10\Debug\List" -o "C:\Users\Ahmed\Desktop\Project 10-
+#        New Approach\Project 10\Debug\Obj" --no_cse --no_unroll --no_inline
+#        --no_code_motion --no_tbaa --debug -D__MSP430FR5994__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.0\430\lib\dlib\dl430xlsfn.h" --core=430X --data_model=small -On
+#        --multiplier=32 --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List\convert.lst
+#    Object file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\Obj\convert.r43
+#
+###############################################################################
+
+C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\convert.c
+      1          #include  "msp430.h"
+      2          #include  "functions.h"
+      3          #include  <string.h>
+      4          #include  "macros.h"
+      5          
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+      6          char adc_char[ADC_CHAR_4];
+   \                     adc_char:
+   \   000000                DS8 4
+      7          extern char display_line[LCD_LINES][LCD_CHAR_NUM];
+      8          extern volatile unsigned char update_display;
+      9          
+     10          
+     11          
+
+   \                                 In  segment CODE, align 2
+     12          void HEXtoBCD2(int hex_value){
+   \                     HEXtoBCD2:
+   \   000000   1B15         PUSHM.W #0x2, R11
+   \   000002   0B4C         MOV.W   R12, R11
+     13            int value=RESET_VALUE;
+   \   000004   0A43         MOV.W   #0x0, R10
+     14           
+     15            adc_char[ADC_CHAR_0] = CHAR_0;
+   \   000006   F2403000.... MOV.B   #0x30, &adc_char
+     16            clear_display_line(LCD_LINE2);
+   \   00000C   2C43         MOV.W   #0x2, R12
+   \   00000E   ........     CALLA   #clear_display_line
+     17            
+     18            while (hex_value > 999){
+   \                     ??HEXtoBCD2_0:
+   \   000012   3B90E803     CMP.W   #0x3e8, R11
+   \   000016   0C38         JL      ??HEXtoBCD2_3
+     19              hex_value = hex_value - 1000;
+   \   000018   3B5018FC     ADD.W   #0xfc18, R11
+     20              value++;
+   \   00001C   1A53         ADD.W   #0x1, R10
+     21              adc_char[ADC_CHAR_0] = 0x30 + value;
+   \   00001E   0E12         PUSH.W  R14
+   \   000020   C14A0000     MOV.B   R10, 0(SP)
+   \   000024   3E41         POP.W   R14
+   \   000026   7E503000     ADD.B   #0x30, R14
+   \   00002A   C24E....     MOV.B   R14, &adc_char
+   \   00002E   F13F         JMP     ??HEXtoBCD2_0
+     22              }
+     23            
+     24            value = RESET_STATE;
+   \                     ??HEXtoBCD2_3:
+   \   000030   0A43         MOV.W   #0x0, R10
+     25            adc_char[ADC_CHAR_1] = 0x30 + value;
+   \   000032   0E12         PUSH.W  R14
+   \   000034   C14A0000     MOV.B   R10, 0(SP)
+   \   000038   3E41         POP.W   R14
+   \   00003A   7E503000     ADD.B   #0x30, R14
+   \   00003E   C24E....     MOV.B   R14, &adc_char + 1
+     26              while (hex_value > 99){
+   \                     ??HEXtoBCD2_1:
+   \   000042   3B906400     CMP.W   #0x64, R11
+   \   000046   0C38         JL      ??HEXtoBCD2_4
+     27                hex_value = hex_value - 100;
+   \   000048   3B509CFF     ADD.W   #0xff9c, R11
+     28                value++;
+   \   00004C   1A53         ADD.W   #0x1, R10
+     29                adc_char[ADC_CHAR_1] = 0x30 + value;
+   \   00004E   0E12         PUSH.W  R14
+   \   000050   C14A0000     MOV.B   R10, 0(SP)
+   \   000054   3E41         POP.W   R14
+   \   000056   7E503000     ADD.B   #0x30, R14
+   \   00005A   C24E....     MOV.B   R14, &adc_char + 1
+   \   00005E   F13F         JMP     ??HEXtoBCD2_1
+     30              }
+     31              
+     32              value = RESET_STATE;
+   \                     ??HEXtoBCD2_4:
+   \   000060   0A43         MOV.W   #0x0, R10
+     33               adc_char[ADC_CHAR_2] = 0x30 + value;
+   \   000062   0E12         PUSH.W  R14
+   \   000064   C14A0000     MOV.B   R10, 0(SP)
+   \   000068   3E41         POP.W   R14
+   \   00006A   7E503000     ADD.B   #0x30, R14
+   \   00006E   C24E....     MOV.B   R14, &adc_char + 2
+     34          
+     35              while (hex_value > 9){
+   \                     ??HEXtoBCD2_2:
+   \   000072   3B900A00     CMP.W   #0xa, R11
+   \   000076   0C38         JL      ??HEXtoBCD2_5
+     36                hex_value = hex_value - 10;
+   \   000078   3B50F6FF     ADD.W   #0xfff6, R11
+     37                value++;
+   \   00007C   1A53         ADD.W   #0x1, R10
+     38              adc_char[ADC_CHAR_2] = 0x30 + value;
+   \   00007E   0E12         PUSH.W  R14
+   \   000080   C14A0000     MOV.B   R10, 0(SP)
+   \   000084   3E41         POP.W   R14
+   \   000086   7E503000     ADD.B   #0x30, R14
+   \   00008A   C24E....     MOV.B   R14, &adc_char + 2
+   \   00008E   F13F         JMP     ??HEXtoBCD2_2
+     39          
+     40              }
+     41              
+     42            adc_char[ADC_CHAR_3] = 0x30 + hex_value;
+   \                     ??HEXtoBCD2_5:
+   \   000090   0E12         PUSH.W  R14
+   \   000092   C14B0000     MOV.B   R11, 0(SP)
+   \   000096   3E41         POP.W   R14
+   \   000098   7E503000     ADD.B   #0x30, R14
+   \   00009C   C24E....     MOV.B   R14, &adc_char + 3
+     43          
+     44          
+     45             //for(i=RESET_STATE; i<=ADC_CHAR_3;i++)
+     46              strncpy(display_line[LCD_LINE2], adc_char,4);
+   \   0000A0   2E42         MOV.W   #0x4, R14
+   \   0000A2   3D40....     MOV.W   #adc_char, R13
+   \   0000A6   3C40....     MOV.W   #display_line + 22, R12
+   \   0000AA   ........     CALLA   #strncpy
+     47             
+     48             //strcpy(display_line[LCD_LINE2]+4," ");
+     49          
+     50            Display_Update(RESET_VALUE,RESET_VALUE,RESET_VALUE,RESET_VALUE);
+   \   0000AE   4F43         MOV.B   #0x0, R15
+   \   0000B0   4E43         MOV.B   #0x0, R14
+   \   0000B2   4D43         MOV.B   #0x0, R13
+   \   0000B4   4C43         MOV.B   #0x0, R12
+   \   0000B6   ........     CALLA   #Display_Update
+     51          
+     52          
+     53          }
+   \   0000BA   1A17         POPM.W  #0x2, R11
+   \   0000BC   1001         RETA
+     54          
+     55          
+     56          
+     57          
+     58          
+     59          
+     60          
+     61          
+     62          
+     63          
+     64          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+     10   HEXtoBCD2
+        8   -> Display_Update
+        8   -> clear_display_line
+        8   -> strncpy
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+     190  HEXtoBCD2
+       4  adc_char
+
+ 
+ 190 bytes in segment CODE
+   4 bytes in segment DATA16_Z
+ 
+ 190 bytes of CODE memory
+   4 bytes of DATA memory
+
+Errors: none
+Warnings: none

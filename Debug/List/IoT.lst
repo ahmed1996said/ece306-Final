@@ -1,0 +1,673 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.1.987/W32 for MSP430           04/Dec/2018  11:06:29
+# Copyright 1996-2018 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\IoT.c
+#    Command line  =  
+#        -f C:\Users\Ahmed\AppData\Local\Temp\EW6C80.tmp
+#        ("C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\IoT.c"
+#        -lC "C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List" -o "C:\Users\Ahmed\Desktop\Project 10- New
+#        Approach\Project 10\Debug\Obj" --no_cse --no_unroll --no_inline
+#        --no_code_motion --no_tbaa --debug -D__MSP430FR5994__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.0\430\lib\dlib\dl430xlsfn.h" --core=430X --data_model=small -On
+#        --multiplier=32 --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List\IoT.lst
+#    Object file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\Obj\IoT.r43
+#
+###############################################################################
+
+C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\IoT.c
+      1          //===========================================================================
+      2          // File Name : IoT.c
+      3          //
+      4          // Description: This file contains IoT commands
+      5          //
+      6          // Author: Ahmed Al Mahrooqi
+      7          // Date: September 2018
+      8          // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (7.12.1)
+      9          //===========================================================================
+     10          
+     11          #include  "msp430.h"
+     12          #include  "functions.h"
+     13          #include  <string.h>
+     14          #include  "macros.h"
+     15          
+     16          extern unsigned int index_a3;
+     17          extern char command_buffer3[CMD_BUFFER_SIZE];
+     18          extern unsigned int a;
+     19          extern unsigned int b;
+     20          extern unsigned int c;
+     21          extern unsigned int cmd_index;
+     22          extern unsigned int time_requested;
+     23          extern unsigned int password;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     24          unsigned int ctr;
+   \                     ctr:
+   \   000000                DS8 2
+     25          extern unsigned int menu_on;
+     26          extern char display_line[LCD_LINES][LCD_CHAR_NUM];
+     27          extern unsigned int find_ip;
+     28          extern char ip_address[SMALL_RING_SIZE];
+     29          extern unsigned int ip_found;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     30          unsigned int stop_flag=RESET_VALUE;
+   \                     stop_flag:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     31          unsigned int reconnect_cnt;
+   \                     reconnect_cnt:
+   \   000000                DS8 2
+     32          extern volatile unsigned int reconnect;
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     33          char arch; 
+   \                     arch:
+   \   000000                DS8 1
+     34          
+     35          extern unsigned int ii;
+     36          extern volatile unsigned int cmd_cnt;
+     37          extern unsigned int caret_index[CARET_BUFFER];
+     38          extern volatile unsigned int command_complete_A3;
+     39          extern unsigned int intercept_flag;
+     40          extern volatile unsigned int state ;
+     41          extern unsigned int adc_on;
+     42          
+
+   \                                 In  segment CODE, align 2
+     43          void increment_cmd_index(void){
+   \                     increment_cmd_index:
+     44                   if(++cmd_index >= CMD_BUFFER_SIZE)
+   \   000000   9253....     ADD.W   #0x1, &cmd_index
+   \   000004   B2902600.... CMP.W   #0x26, &cmd_index
+   \   00000A   0228         JNC     ??increment_cmd_index_0
+     45                     cmd_index = BEGINNING;
+   \   00000C   8243....     MOV.W   #0x0, &cmd_index
+     46          }
+   \                     ??increment_cmd_index_0:
+   \   000010   1001         RETA
+     47          
+     48          
+
+   \                                 In  segment CODE, align 2
+     49          void check_password(void){
+   \                     check_password:
+     50            
+     51              increment_cmd_index();
+   \   000000   ........     CALLA   #increment_cmd_index
+     52              switch(command_buffer3[cmd_index]){    
+   \   000004   1F42....     MOV.W   &cmd_index, R15
+   \   000008   FF903900.... CMP.B   #0x39, command_buffer3(R15)
+   \   00000E   1F20         JNE     ??check_password_1
+     53                case PIN0:                        // check password
+     54                    increment_cmd_index();
+   \   000010   ........     CALLA   #increment_cmd_index
+     55                    if(command_buffer3[cmd_index] == PIN1){
+   \   000014   1F42....     MOV.W   &cmd_index, R15
+   \   000018   FF903200.... CMP.B   #0x32, command_buffer3(R15)
+   \   00001E   1720         JNE     ??check_password_1
+     56                        increment_cmd_index();
+   \   000020   ........     CALLA   #increment_cmd_index
+     57                      if(command_buffer3[cmd_index] == PIN2){
+   \   000024   1F42....     MOV.W   &cmd_index, R15
+   \   000028   FF903200.... CMP.B   #0x32, command_buffer3(R15)
+   \   00002E   0F20         JNE     ??check_password_1
+     58                          increment_cmd_index();
+   \   000030   ........     CALLA   #increment_cmd_index
+     59                        if(command_buffer3[cmd_index] == PIN3){
+   \   000034   1F42....     MOV.W   &cmd_index, R15
+   \   000038   FF903800.... CMP.B   #0x38, command_buffer3(R15)
+   \   00003E   0520         JNE     ??check_password_2
+     60                           increment_cmd_index();
+   \   000040   ........     CALLA   #increment_cmd_index
+     61                          password=TRUE;
+   \   000044   9243....     MOV.W   #0x1, &password
+   \   000048   1001         RETA
+     62                        }
+     63                        else password=RESET_VALUE;
+   \                     ??check_password_2:
+   \   00004A   8243....     MOV.W   #0x0, &password
+     64                      }
+     65                    }              
+     66                  break;
+     67              default:break;
+     68              }
+     69          }
+   \                     ??check_password_1:
+   \   00004E   1001         RETA
+     70          
+     71          
+
+   \                                 In  segment CODE, align 2
+     72          void interrogate_command(void){
+   \                     interrogate_command:
+     73          
+     74          
+     75            switch(command_buffer3[cmd_index]){    
+   \   000000   1F42....     MOV.W   &cmd_index, R15
+   \   000004   5E4F....     MOV.B   command_buffer3(R15), R14
+   \   000008   7E804200     SUB.B   #0x42, R14
+   \   00000C   4324         JEQ     ??interrogate_command_2
+   \   00000E   6E82         SUB.B   #0x4, R14
+   \   000010   0A24         JEQ     ??interrogate_command_3
+   \   000012   7E800300     SUB.B   #0x3, R14
+   \   000016   E324         JEQ     ??interrogate_command_4
+   \   000018   7E800300     SUB.B   #0x3, R14
+   \   00001C   A924         JEQ     ??interrogate_command_5
+   \   00001E   7E800600     SUB.B   #0x6, R14
+   \   000022   6F24         JEQ     ??interrogate_command_6
+   \   000024   1001         RETA
+     76            
+     77                   case FWD:                      //forward('F')
+     78                     increment_cmd_index();
+   \                     ??interrogate_command_3:
+   \   000026   ........     CALLA   #increment_cmd_index
+     79                     
+     80                     a=(command_buffer3[cmd_index]-CONVERSION_FACTOR)*HUNDRED;
+   \   00002A   1F42....     MOV.W   &cmd_index, R15
+   \   00002E   5F4F....     MOV.B   command_buffer3(R15), R15
+   \   000032   4F4F         MOV.B   R15, R15
+   \   000034   3F50D0FF     ADD.W   #0xffd0, R15
+   \   000038   5F06         RLAM.W  #0x2, R15
+   \   00003A   0E4F         MOV.W   R15, R14
+   \   00003C   5F0A         RLAM.W  #0x3, R15
+   \   00003E   0E5F         ADD.W   R15, R14
+   \   000040   0F5F         RLA.W   R15
+   \   000042   0F5E         ADD.W   R14, R15
+   \   000044   824F....     MOV.W   R15, &`a`
+     81                     increment_cmd_index();
+   \   000048   ........     CALLA   #increment_cmd_index
+     82                     
+     83                     b = (command_buffer3[cmd_index]-CONVERSION_FACTOR)*TEN;
+   \   00004C   1F42....     MOV.W   &cmd_index, R15
+   \   000050   5F4F....     MOV.B   command_buffer3(R15), R15
+   \   000054   4F4F         MOV.B   R15, R15
+   \   000056   3F50D0FF     ADD.W   #0xffd0, R15
+   \   00005A   0F5F         RLA.W   R15
+   \   00005C   0E4F         MOV.W   R15, R14
+   \   00005E   5F06         RLAM.W  #0x2, R15
+   \   000060   0F5E         ADD.W   R14, R15
+   \   000062   824F....     MOV.W   R15, &`b`
+     84                     increment_cmd_index();
+   \   000066   ........     CALLA   #increment_cmd_index
+     85                           
+     86                     c= command_buffer3[cmd_index]-CONVERSION_FACTOR;   
+   \   00006A   1F42....     MOV.W   &cmd_index, R15
+   \   00006E   5F4F....     MOV.B   command_buffer3(R15), R15
+   \   000072   4F4F         MOV.B   R15, R15
+   \   000074   3F50D0FF     ADD.W   #0xffd0, R15
+   \   000078   824F....     MOV.W   R15, &c
+     87                     
+     88                     time_requested=a+b+c;
+   \   00007C   1F42....     MOV.W   &`a`, R15
+   \   000080   1F52....     ADD.W   &`b`, R15
+   \   000084   1F52....     ADD.W   &c, R15
+   \   000088   824F....     MOV.W   R15, &time_requested
+     89                     
+     90                     //time requested = 1 =>100ms, 10 => 1s
+     91                     go_forward(time_requested);
+   \   00008C   1C42....     MOV.W   &time_requested, R12
+   \   000090   ........     BRA     #go_forward
+     92                     
+     93                    break;
+     94                    
+     95                    case RVR:             //backward ('B')
+     96                     increment_cmd_index();
+   \                     ??interrogate_command_2:
+   \   000094   ........     CALLA   #increment_cmd_index
+     97                     
+     98                     a=(command_buffer3[cmd_index]-CONVERSION_FACTOR)*HUNDRED;
+   \   000098   1F42....     MOV.W   &cmd_index, R15
+   \   00009C   5F4F....     MOV.B   command_buffer3(R15), R15
+   \   0000A0   4F4F         MOV.B   R15, R15
+   \   0000A2   3F50D0FF     ADD.W   #0xffd0, R15
+   \   0000A6   5F06         RLAM.W  #0x2, R15
+   \   0000A8   0E4F         MOV.W   R15, R14
+   \   0000AA   5F0A         RLAM.W  #0x3, R15
+   \   0000AC   0E5F         ADD.W   R15, R14
+   \   0000AE   0F5F         RLA.W   R15
+   \   0000B0   0F5E         ADD.W   R14, R15
+   \   0000B2   824F....     MOV.W   R15, &`a`
+     99                     increment_cmd_index();
+   \   0000B6   ........     CALLA   #increment_cmd_index
+    100                     
+    101                     b = (command_buffer3[cmd_index]-CONVERSION_FACTOR)*TEN;
+   \   0000BA   1F42....     MOV.W   &cmd_index, R15
+   \   0000BE   5F4F....     MOV.B   command_buffer3(R15), R15
+   \   0000C2   4F4F         MOV.B   R15, R15
+   \   0000C4   3F50D0FF     ADD.W   #0xffd0, R15
+   \   0000C8   0F5F         RLA.W   R15
+   \   0000CA   0E4F         MOV.W   R15, R14
+   \   0000CC   5F06         RLAM.W  #0x2, R15
+   \   0000CE   0F5E         ADD.W   R14, R15
+   \   0000D0   824F....     MOV.W   R15, &`b`
+    102                     increment_cmd_index();
+   \   0000D4   ........     CALLA   #increment_cmd_index
+    103                           
+    104                     c= command_buffer3[cmd_index]-CONVERSION_FACTOR;   
+   \   0000D8   1F42....     MOV.W   &cmd_index, R15
+   \   0000DC   5F4F....     MOV.B   command_buffer3(R15), R15
+   \   0000E0   4F4F         MOV.B   R15, R15
+   \   0000E2   3F50D0FF     ADD.W   #0xffd0, R15
+   \   0000E6   824F....     MOV.W   R15, &c
+    105                     
+    106                     time_requested=a+b+c;
+   \   0000EA   1F42....     MOV.W   &`a`, R15
+   \   0000EE   1F52....     ADD.W   &`b`, R15
+   \   0000F2   1F52....     ADD.W   &c, R15
+   \   0000F6   824F....     MOV.W   R15, &time_requested
+    107                     
+    108                     //time requested = 1 =>100ms, 10 => 1s
+    109                     go_reverse(time_requested);
+   \   0000FA   1C42....     MOV.W   &time_requested, R12
+   \   0000FE   ........     BRA     #go_reverse
+    110                    break;
+    111                    
+    112                   case RGT:            //Right ('R')
+    113                     increment_cmd_index();
+   \                     ??interrogate_command_6:
+   \   000102   ........     CALLA   #increment_cmd_index
+    114                     
+    115                     a=(command_buffer3[cmd_index]-CONVERSION_FACTOR)*HUNDRED;
+   \   000106   1F42....     MOV.W   &cmd_index, R15
+   \   00010A   5F4F....     MOV.B   command_buffer3(R15), R15
+   \   00010E   4F4F         MOV.B   R15, R15
+   \   000110   3F50D0FF     ADD.W   #0xffd0, R15
+   \   000114   5F06         RLAM.W  #0x2, R15
+   \   000116   0E4F         MOV.W   R15, R14
+   \   000118   5F0A         RLAM.W  #0x3, R15
+   \   00011A   0E5F         ADD.W   R15, R14
+   \   00011C   0F5F         RLA.W   R15
+   \   00011E   0F5E         ADD.W   R14, R15
+   \   000120   824F....     MOV.W   R15, &`a`
+    116                     increment_cmd_index();
+   \   000124   ........     CALLA   #increment_cmd_index
+    117                     
+    118                     b = (command_buffer3[cmd_index]-CONVERSION_FACTOR)*TEN;
+   \   000128   1F42....     MOV.W   &cmd_index, R15
+   \   00012C   5F4F....     MOV.B   command_buffer3(R15), R15
+   \   000130   4F4F         MOV.B   R15, R15
+   \   000132   3F50D0FF     ADD.W   #0xffd0, R15
+   \   000136   0F5F         RLA.W   R15
+   \   000138   0E4F         MOV.W   R15, R14
+   \   00013A   5F06         RLAM.W  #0x2, R15
+   \   00013C   0F5E         ADD.W   R14, R15
+   \   00013E   824F....     MOV.W   R15, &`b`
+    119                     increment_cmd_index();
+   \   000142   ........     CALLA   #increment_cmd_index
+    120                           
+    121                     c= command_buffer3[cmd_index]-CONVERSION_FACTOR;   
+   \   000146   1F42....     MOV.W   &cmd_index, R15
+   \   00014A   5F4F....     MOV.B   command_buffer3(R15), R15
+   \   00014E   4F4F         MOV.B   R15, R15
+   \   000150   3F50D0FF     ADD.W   #0xffd0, R15
+   \   000154   824F....     MOV.W   R15, &c
+    122                     
+    123                     time_requested=a+b+c;
+   \   000158   1F42....     MOV.W   &`a`, R15
+   \   00015C   1F52....     ADD.W   &`b`, R15
+   \   000160   1F52....     ADD.W   &c, R15
+   \   000164   824F....     MOV.W   R15, &time_requested
+    124                     
+    125                     //time requested = 1 =>100ms, 10 => 1s
+    126                     turn_right(time_requested);
+   \   000168   1C42....     MOV.W   &time_requested, R12
+   \   00016C   ........     BRA     #turn_right
+    127                    break;
+    128                    
+    129                  case LFT:             // left ('L')
+    130                     increment_cmd_index();
+   \                     ??interrogate_command_5:
+   \   000170   ........     CALLA   #increment_cmd_index
+    131                     
+    132                     a=(command_buffer3[cmd_index]-CONVERSION_FACTOR)*HUNDRED;
+   \   000174   1F42....     MOV.W   &cmd_index, R15
+   \   000178   5F4F....     MOV.B   command_buffer3(R15), R15
+   \   00017C   4F4F         MOV.B   R15, R15
+   \   00017E   3F50D0FF     ADD.W   #0xffd0, R15
+   \   000182   5F06         RLAM.W  #0x2, R15
+   \   000184   0E4F         MOV.W   R15, R14
+   \   000186   5F0A         RLAM.W  #0x3, R15
+   \   000188   0E5F         ADD.W   R15, R14
+   \   00018A   0F5F         RLA.W   R15
+   \   00018C   0F5E         ADD.W   R14, R15
+   \   00018E   824F....     MOV.W   R15, &`a`
+    133                     increment_cmd_index();
+   \   000192   ........     CALLA   #increment_cmd_index
+    134                     
+    135                     b = (command_buffer3[cmd_index]-CONVERSION_FACTOR)*TEN;
+   \   000196   1F42....     MOV.W   &cmd_index, R15
+   \   00019A   5F4F....     MOV.B   command_buffer3(R15), R15
+   \   00019E   4F4F         MOV.B   R15, R15
+   \   0001A0   3F50D0FF     ADD.W   #0xffd0, R15
+   \   0001A4   0F5F         RLA.W   R15
+   \   0001A6   0E4F         MOV.W   R15, R14
+   \   0001A8   5F06         RLAM.W  #0x2, R15
+   \   0001AA   0F5E         ADD.W   R14, R15
+   \   0001AC   824F....     MOV.W   R15, &`b`
+    136                     increment_cmd_index();
+   \   0001B0   ........     CALLA   #increment_cmd_index
+    137                           
+    138                     c= command_buffer3[cmd_index]-CONVERSION_FACTOR;   
+   \   0001B4   1F42....     MOV.W   &cmd_index, R15
+   \   0001B8   5F4F....     MOV.B   command_buffer3(R15), R15
+   \   0001BC   4F4F         MOV.B   R15, R15
+   \   0001BE   3F50D0FF     ADD.W   #0xffd0, R15
+   \   0001C2   824F....     MOV.W   R15, &c
+    139                     
+    140                     time_requested=a+b+c;
+   \   0001C6   1F42....     MOV.W   &`a`, R15
+   \   0001CA   1F52....     ADD.W   &`b`, R15
+   \   0001CE   1F52....     ADD.W   &c, R15
+   \   0001D2   824F....     MOV.W   R15, &time_requested
+    141                     
+    142                     //time requested = 1 =>100ms, 10 => 1s
+    143                     turn_left(time_requested);
+   \   0001D6   1C42....     MOV.W   &time_requested, R12
+   \   0001DA   ........     BRA     #turn_left
+    144                    break;
+    145                    
+    146                  case INTCPT:                // intercept ('I')
+    147                                              // format = (I<size><direction>), size= B (big arch),S= (small arch)
+    148                                              //                                direction= L (left), R (right)
+    149                     increment_cmd_index();
+   \                     ??interrogate_command_4:
+   \   0001DE   ........     CALLA   #increment_cmd_index
+    150                     
+    151                     if(command_buffer3[cmd_index]=='B'){
+   \   0001E2   1F42....     MOV.W   &cmd_index, R15
+   \   0001E6   FF904200.... CMP.B   #0x42, command_buffer3(R15)
+   \   0001EC   1020         JNE     ??interrogate_command_7
+    152                       increment_cmd_index();
+   \   0001EE   ........     CALLA   #increment_cmd_index
+    153                       if(command_buffer3[cmd_index]=='R'){
+   \   0001F2   1F42....     MOV.W   &cmd_index, R15
+   \   0001F6   FF905200.... CMP.B   #0x52, command_buffer3(R15)
+   \   0001FC   0420         JNE     ??interrogate_command_8
+    154                         arch=BIG_RIGHT;
+   \   0001FE   F2407700.... MOV.B   #0x77, &arch
+   \   000204   193C         JMP     ??interrogate_command_1
+    155                       }
+    156                       else arch=BIG_LEFT;
+   \                     ??interrogate_command_8:
+   \   000206   F2407800.... MOV.B   #0x78, &arch
+   \   00020C   153C         JMP     ??interrogate_command_1
+    157                     }
+    158                     else{
+    159                      if(command_buffer3[cmd_index]=='S'){
+   \                     ??interrogate_command_7:
+   \   00020E   1F42....     MOV.W   &cmd_index, R15
+   \   000212   FF905300.... CMP.B   #0x53, command_buffer3(R15)
+   \   000218   0F20         JNE     ??interrogate_command_1
+    160                       increment_cmd_index();
+   \   00021A   ........     CALLA   #increment_cmd_index
+    161                       if(command_buffer3[cmd_index]=='R'){
+   \   00021E   1F42....     MOV.W   &cmd_index, R15
+   \   000222   FF905200.... CMP.B   #0x52, command_buffer3(R15)
+   \   000228   0420         JNE     ??interrogate_command_9
+    162                         arch=SMALL_RIGHT;
+   \   00022A   F2407900.... MOV.B   #0x79, &arch
+   \   000230   033C         JMP     ??interrogate_command_1
+    163                       }
+    164                       else arch=SMALL_LEFT;
+   \                     ??interrogate_command_9:
+   \   000232   F2405A00.... MOV.B   #0x5a, &arch
+    165                     }
+    166                     }
+    167                     adc_on=TRUE;  
+   \                     ??interrogate_command_1:
+   \   000238   9243....     MOV.W   #0x1, &adc_on
+    168                     state=STEP1;
+   \   00023C   9243....     MOV.W   #0x1, &state
+    169                     intercept_flag=TRUE;
+   \   000240   9243....     MOV.W   #0x1, &intercept_flag
+    170                     break;
+    171                   
+    172                   default:break;
+    173                
+    174                   }//switch statement end
+    175              
+    176              }
+   \   000244   1001         RETA
+    177          
+
+   \                                 In  segment CODE, align 2
+    178          void service_IOT_command(void){
+   \                     service_IOT_command:
+    179          
+    180             ii=RESET_VALUE;
+   \   000000   8243....     MOV.W   #0x0, &ii
+    181              while(ii <= cmd_cnt - CORRECTION_FACTOR) // service multiple commands
+   \                     ??service_IOT_command_0:
+   \   000004   1F42....     MOV.W   &cmd_cnt, R15
+   \   000008   3F53         ADD.W   #0xffff, R15
+   \   00000A   1F92....     CMP.W   &ii, R15
+   \   00000E   1028         JNC     ??service_IOT_command_1
+    182              {
+    183                  cmd_index=caret_index[ii];      // check first command, then second,etc..       
+   \   000010   1F42....     MOV.W   &ii, R15
+   \   000014   0F5F         RLA.W   R15
+   \   000016   924F........ MOV.W   caret_index(R15), &cmd_index
+    184                  check_password();               //check if PIN correct
+   \   00001C   ........     CALLA   #check_password
+    185              
+    186                  if(password)       //if correct, continue command interrogation
+   \   000020   8293....     CMP.W   #0x0, &password
+   \   000024   0224         JEQ     ??service_IOT_command_2
+    187                    interrogate_command();       
+   \   000026   ........     CALLA   #interrogate_command
+    188                  ii++;
+   \                     ??service_IOT_command_2:
+   \   00002A   9253....     ADD.W   #0x1, &ii
+   \   00002E   EA3F         JMP     ??service_IOT_command_0
+    189              }
+    190              
+    191            cmd_cnt=RESET_VALUE; 
+   \                     ??service_IOT_command_1:
+   \   000030   8243....     MOV.W   #0x0, &cmd_cnt
+    192            command_complete_A3=RESET_VALUE;  
+   \   000034   8243....     MOV.W   #0x0, &command_complete_A3
+    193          
+    194          
+    195          
+    196          }
+   \   000038   1001         RETA
+    197          
+
+   \                                 In  segment CODE, align 2
+    198          void reconnect_connection(void) {
+   \                     reconnect_connection:
+    199             wait_100ms(FOUR_COUNTS);
+   \   000000   2C42         MOV.W   #0x4, R12
+   \   000002   ........     CALLA   #wait_100ms
+    200             out_string_A3("AT+NSTCP=9228,1");
+   \   000006   3C40....     MOV.W   #`?<Constant "AT+NSTCP=9228,1">`, R12
+   \   00000A   ........     CALLA   #out_string_A3
+    201             wait_100ms(TWO_COUNTS);
+   \   00000E   2C43         MOV.W   #0x2, R12
+   \   000010   ........     CALLA   #wait_100ms
+    202             reconnect_cnt++;
+   \   000014   9253....     ADD.W   #0x1, &reconnect_cnt
+    203             
+    204          
+    205             if(reconnect_cnt >= TWO_COUNTS){
+   \   000018   A293....     CMP.W   #0x2, &reconnect_cnt
+   \   00001C   0C28         JNC     ??reconnect_connection_0
+    206                if(reconnect_cnt>=THREE_COUNTS)
+   \   00001E   B2900300.... CMP.W   #0x3, &reconnect_cnt
+   \   000024   0428         JNC     ??reconnect_connection_1
+    207                  out_string_A3("AT+WKEEPALIVE=3"); 
+   \   000026   3C40....     MOV.W   #`?<Constant "AT+WKEEPALIVE=3">`, R12
+   \   00002A   ........     BRA     #out_string_A3
+    208                else
+    209                out_string_A3("AT+WKEEPALIVE=5");
+   \                     ??reconnect_connection_1:
+   \   00002E   3C40....     MOV.W   #`?<Constant "AT+WKEEPALIVE=5">`, R12
+   \   000032   ........     BRA     #out_string_A3
+    210              }
+    211             else
+    212              out_string_A3("AT+WKEEPALIVE=8"); 
+   \                     ??reconnect_connection_0:
+   \   000036   3C40....     MOV.W   #`?<Constant "AT+WKEEPALIVE=8">`, R12
+   \   00003A   ........     BRA     #out_string_A3
+    213          }
+    214          
+    215          
+    216          
+    217          
+
+   \                                 In  segment CODE, align 2
+    218          void print_ip_address(void){
+   \                     print_ip_address:
+    219              lcd_4line();
+   \   000000   ........     CALLA   #lcd_4line
+    220              menu_on=RESET_VALUE;        // clear menu items
+   \   000004   8243....     MOV.W   #0x0, &menu_on
+    221              clear_display();
+   \   000008   ........     CALLA   #clear_display
+    222              display_string_line(LCD_LINE0,"SSID: ncsu");
+   \   00000C   3D40....     MOV.W   #`?<Constant "SSID: ncsu">`, R13
+   \   000010   0C43         MOV.W   #0x0, R12
+   \   000012   ........     CALLA   #display_string_line
+    223              display_string_line(LCD_LINE1,"IP :");
+   \   000016   3D40....     MOV.W   #`?<Constant "IP :">`, R13
+   \   00001A   1C43         MOV.W   #0x1, R12
+   \   00001C   ........     CALLA   #display_string_line
+    224              
+    225              strncpy(display_line[LCD_LINE2], ip_address,FIRST_HALF);    // print 1st half on line2
+   \   000020   3E400700     MOV.W   #0x7, R14
+   \   000024   3D40....     MOV.W   #ip_address, R13
+   \   000028   3C40....     MOV.W   #display_line + 22, R12
+   \   00002C   ........     CALLA   #strncpy
+    226              strncpy(display_line[LCD_LINE3], ip_address+SECOND_HALF,SECOND_HALF);  // print 2nd half on line 3 
+   \   000030   3E400700     MOV.W   #0x7, R14
+   \   000034   3D40....     MOV.W   #ip_address + 7, R13
+   \   000038   3C40....     MOV.W   #display_line + 33, R12
+   \   00003C   ........     CALLA   #strncpy
+    227              
+    228              ip_found=RESET_VALUE;
+   \   000040   8243....     MOV.W   #0x0, &ip_found
+    229          
+    230          
+    231          }
+   \   000044   1001         RETA
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "AT+NSTCP=9228,1">`:
+   \   000000   41542B4E5354 DC8 "AT+NSTCP=9228,1"
+   \            43503D393232
+   \            382C3100    
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "AT+WKEEPALIVE=3">`:
+   \   000000   41542B574B45 DC8 "AT+WKEEPALIVE=3"
+   \            4550414C4956
+   \            453D3300    
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "AT+WKEEPALIVE=5">`:
+   \   000000   41542B574B45 DC8 "AT+WKEEPALIVE=5"
+   \            4550414C4956
+   \            453D3500    
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "AT+WKEEPALIVE=8">`:
+   \   000000   41542B574B45 DC8 "AT+WKEEPALIVE=8"
+   \            4550414C4956
+   \            453D3800    
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "SSID: ncsu">`:
+   \   000000   535349443A20 DC8 "SSID: ncsu"
+   \            6E63737500  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "IP :">`:
+   \   000000   4950203A00   DC8 "IP :"
+    232          
+    233          
+    234          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   check_password
+        4   -> increment_cmd_index
+      4   increment_cmd_index
+      4   interrogate_command
+        0   -> go_forward
+        0   -> go_reverse
+        4   -> increment_cmd_index
+        0   -> turn_left
+        0   -> turn_right
+      4   print_ip_address
+        4   -> clear_display
+        4   -> display_string_line
+        4   -> lcd_4line
+        4   -> strncpy
+      4   reconnect_connection
+        0   -> out_string_A3
+        4   -> out_string_A3
+        4   -> wait_100ms
+      4   service_IOT_command
+        4   -> check_password
+        4   -> interrogate_command
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      16  ?<Constant "AT+NSTCP=9228,1">
+      16  ?<Constant "AT+WKEEPALIVE=3">
+      16  ?<Constant "AT+WKEEPALIVE=5">
+      16  ?<Constant "AT+WKEEPALIVE=8">
+       5  ?<Constant "IP :">
+      11  ?<Constant "SSID: ncsu">
+       1  arch
+      80  check_password
+       2  ctr
+      18  increment_cmd_index
+     582  interrogate_command
+      70  print_ip_address
+       2  reconnect_cnt
+      62  reconnect_connection
+      58  service_IOT_command
+       2  stop_flag
+
+ 
+ 870 bytes in segment CODE
+  80 bytes in segment DATA16_C
+   7 bytes in segment DATA16_Z
+ 
+ 870 bytes of CODE  memory
+  80 bytes of CONST memory
+   7 bytes of DATA  memory
+
+Errors: none
+Warnings: none

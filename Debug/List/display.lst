@@ -1,0 +1,195 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.1.987/W32 for MSP430           04/Dec/2018  11:06:28
+# Copyright 1996-2018 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\display.c
+#    Command line  =  
+#        -f C:\Users\Ahmed\AppData\Local\Temp\EW694E.tmp
+#        ("C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\display.c" -lC "C:\Users\Ahmed\Desktop\Project 10- New
+#        Approach\Project 10\Debug\List" -o "C:\Users\Ahmed\Desktop\Project 10-
+#        New Approach\Project 10\Debug\Obj" --no_cse --no_unroll --no_inline
+#        --no_code_motion --no_tbaa --debug -D__MSP430FR5994__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.0\430\lib\dlib\dl430xlsfn.h" --core=430X --data_model=small -On
+#        --multiplier=32 --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List\display.lst
+#    Object file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\Obj\display.r43
+#
+###############################################################################
+
+C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\display.c
+      1          //===========================================================================
+      2          // File Name : display.c
+      3          //
+      4          // Description: This file contains functions that updates the display with strings
+      5          //
+      6          // Author: Ahmed Al Mahrooqi
+      7          // Date: October 2018
+      8          // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (7.12.1)
+      9          //===========================================================================
+     10          
+     11          #include  "msp430.h"
+     12          #include  "functions.h"
+     13          #include  <string.h>
+     14          #include  "macros.h"
+     15          
+     16          extern char display_line[LCD_LINES][LCD_CHAR_NUM];
+     17          extern char *display[LCD_LINES];
+     18          extern volatile unsigned char update_display;
+     19          
+     20          
+
+   \                                 In  segment CODE, align 2
+     21          void clear_display_line(int linenum){
+   \                     clear_display_line:
+   \   000000   0A12         PUSH.W  R10
+   \   000002   0A4C         MOV.W   R12, R10
+     22          
+     23            strcpy(display_line[linenum], "          ");
+   \   000004   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   000008   0C4A         MOV.W   R10, R12
+   \   00000A                RPT     #0xa
+   \   00000A   49180C5A     ADDX.W  R10, R12
+   \   00000E   3C50....     ADD.W   #display_line, R12
+   \   000012   ........     CALLA   #strcpy
+     24            
+     25            //update_string(display_line[linenum], linenum);
+     26            //enable_display_update(); 
+     27            Display_Update(RESET_VALUE,RESET_VALUE,RESET_VALUE,RESET_VALUE);  
+   \   000016   4F43         MOV.B   #0x0, R15
+   \   000018   4E43         MOV.B   #0x0, R14
+   \   00001A   4D43         MOV.B   #0x0, R13
+   \   00001C   4C43         MOV.B   #0x0, R12
+   \   00001E   ........     CALLA   #Display_Update
+     28            //update_display = TRUE;    
+     29            
+     30          }
+   \   000022   3A41         POP.W   R10
+   \   000024   1001         RETA
+     31          
+
+   \                                 In  segment CODE, align 2
+     32          void display_string_line(int linenum,char *text){
+   \                     display_string_line:
+   \   000000   3B15         PUSHM.W #0x4, R11
+   \   000002   0A4C         MOV.W   R12, R10
+   \   000004   0B4D         MOV.W   R13, R11
+     33            int new_text = strcmp(display_line[linenum], text);
+   \   000006   0D4B         MOV.W   R11, R13
+   \   000008   0C4A         MOV.W   R10, R12
+   \   00000A                RPT     #0xa
+   \   00000A   49180C5A     ADDX.W  R10, R12
+   \   00000E   3C50....     ADD.W   #display_line, R12
+   \   000012   ........     CALLA   #strcmp
+   \   000016   084C         MOV.W   R12, R8
+     34            
+     35            if( new_text )   
+   \   000018   0893         CMP.W   #0x0, R8
+   \   00001A   1124         JEQ     ??display_string_line_0
+     36            {
+     37            clear_display_line(linenum);
+   \   00001C   0C4A         MOV.W   R10, R12
+   \   00001E   ........     CALLA   #clear_display_line
+     38            
+     39            strcpy(display_line[linenum], text);
+   \   000022   0D4B         MOV.W   R11, R13
+   \   000024   0C4A         MOV.W   R10, R12
+   \   000026                RPT     #0xa
+   \   000026   49180C5A     ADDX.W  R10, R12
+   \   00002A   3C50....     ADD.W   #display_line, R12
+   \   00002E   ........     CALLA   #strcpy
+     40            
+     41            //update_string(display_line[linenum], linenum);
+     42            //enable_display_update();   
+     43            Display_Update(RESET_VALUE,RESET_VALUE,RESET_VALUE,RESET_VALUE);
+   \   000032   4F43         MOV.B   #0x0, R15
+   \   000034   4E43         MOV.B   #0x0, R14
+   \   000036   4D43         MOV.B   #0x0, R13
+   \   000038   4C43         MOV.B   #0x0, R12
+   \   00003A   ........     CALLA   #Display_Update
+     44            //update_display = TRUE;  
+     45            
+     46            }
+     47          
+     48          }
+   \                     ??display_string_line_0:
+   \   00003E   3817         POPM.W  #0x4, R11
+   \   000040   1001         RETA
+     49          
+     50          
+
+   \                                 In  segment CODE, align 2
+     51          void clear_display(void){
+   \                     clear_display:
+     52          clear_display_line(LCD_LINE0);
+   \   000000   0C43         MOV.W   #0x0, R12
+   \   000002   ........     CALLA   #clear_display_line
+     53          clear_display_line(LCD_LINE1);
+   \   000006   1C43         MOV.W   #0x1, R12
+   \   000008   ........     CALLA   #clear_display_line
+     54          clear_display_line(LCD_LINE2);
+   \   00000C   2C43         MOV.W   #0x2, R12
+   \   00000E   ........     CALLA   #clear_display_line
+     55          clear_display_line(LCD_LINE3);
+   \   000012   3C400300     MOV.W   #0x3, R12
+   \   000016   ........     BRA     #clear_display_line
+     56          
+     57          }
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "          ">`:
+   \   000000   202020202020 DC8 "          "
+   \            2020202000  
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   clear_display
+        0   -> clear_display_line
+        4   -> clear_display_line
+      6   clear_display_line
+        6   -> Display_Update
+        6   -> strcpy
+     12   display_string_line
+       12   -> Display_Update
+       12   -> clear_display_line
+       12   -> strcmp
+       12   -> strcpy
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      11  ?<Constant "          ">
+      26  clear_display
+      38  clear_display_line
+      66  display_string_line
+
+ 
+ 130 bytes in segment CODE
+  11 bytes in segment DATA16_C
+ 
+ 130 bytes of CODE  memory
+  11 bytes of CONST memory
+
+Errors: none
+Warnings: none

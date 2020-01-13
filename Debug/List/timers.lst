@@ -1,0 +1,338 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.1.987/W32 for MSP430           04/Dec/2018  11:06:30
+# Copyright 1996-2018 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\timers.c
+#    Command line  =  
+#        -f C:\Users\Ahmed\AppData\Local\Temp\EW6FC4.tmp
+#        ("C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\timers.c"
+#        -lC "C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List" -o "C:\Users\Ahmed\Desktop\Project 10- New
+#        Approach\Project 10\Debug\Obj" --no_cse --no_unroll --no_inline
+#        --no_code_motion --no_tbaa --debug -D__MSP430FR5994__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.0\430\lib\dlib\dl430xlsfn.h" --core=430X --data_model=small -On
+#        --multiplier=32 --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List\timers.lst
+#    Object file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\Obj\timers.r43
+#
+###############################################################################
+
+C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\timers.c
+      1          //===========================================================================
+      2          // File Name : timers.c
+      3          //
+      4          // Description: This file contains timer initializations
+      5          //
+      6          // Author: Ahmed Al Mahrooqi
+      7          // Date: September 2018
+      8          // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (7.12.1)
+      9          //===========================================================================
+     10          
+     11          #include  "msp430.h"
+
+   \                                 In  segment DATA16_AN, at 0x340
+   \   union <unnamed> _A_TA0CTL_L
+   \                     _A_TA0CTL_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x342
+   \   union <unnamed> _A_TA0CCTL0_L
+   \                     _A_TA0CCTL0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x346
+   \   union <unnamed> _A_TA0CCTL2_L
+   \                     _A_TA0CCTL2_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x352
+   \   union <unnamed> _A_TA0CCR0_L
+   \                     _A_TA0CCR0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x354
+   \   union <unnamed> _A_TA0CCR1_L
+   \                     _A_TA0CCR1_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x356
+   \   union <unnamed> _A_TA0CCR2_L
+   \                     _A_TA0CCR2_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x360
+   \   union <unnamed> _A_TA0EX0_L
+   \                     _A_TA0EX0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3c0
+   \   union <unnamed> _A_TB0CTL_L
+   \                     _A_TB0CTL_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3c8
+   \   union <unnamed> _A_TB0CCTL3_L
+   \                     _A_TB0CCTL3_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3ca
+   \   union <unnamed> _A_TB0CCTL4_L
+   \                     _A_TB0CCTL4_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3cc
+   \   union <unnamed> _A_TB0CCTL5_L
+   \                     _A_TB0CCTL5_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3ce
+   \   union <unnamed> _A_TB0CCTL6_L
+   \                     _A_TB0CCTL6_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3d2
+   \   union <unnamed> _A_TB0CCR0_L
+   \                     _A_TB0CCR0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3d8
+   \   union <unnamed> _A_TB0CCR3_L
+   \                     _A_TB0CCR3_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3da
+   \   union <unnamed> _A_TB0CCR4_L
+   \                     _A_TB0CCR4_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3dc
+   \   union <unnamed> _A_TB0CCR5_L
+   \                     _A_TB0CCR5_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3de
+   \   union <unnamed> _A_TB0CCR6_L
+   \                     _A_TB0CCR6_L:
+   \   000000                DS8 2
+     12          #include  "functions.h"
+     13          #include  <string.h>
+     14          #include  "macros.h"
+     15          
+     16          extern volatile unsigned int lcd_update_count;
+     17          extern volatile unsigned char update_display;
+     18          extern volatile unsigned int timer_count;
+     19          extern volatile unsigned int timer;
+     20          extern unsigned int tcp_timer;
+     21          
+
+   \                                 In  segment CODE, align 2
+     22          void timer_polling(void){
+   \                     timer_polling:
+     23            
+     24               if(lcd_update_count >= LCD_UPDATE_TIME){      // every 200 ms update display
+   \   000000   A292....     CMP.W   #0x4, &lcd_update_count
+   \   000004   0C28         JNC     ??timer_polling_0
+     25                 enable_display_update();
+   \   000006   ........     CALLA   #enable_display_update
+     26                 Display_Update(RESET_VALUE,RESET_VALUE,RESET_VALUE,RESET_VALUE);
+   \   00000A   4F43         MOV.B   #0x0, R15
+   \   00000C   4E43         MOV.B   #0x0, R14
+   \   00000E   4D43         MOV.B   #0x0, R13
+   \   000010   4C43         MOV.B   #0x0, R12
+   \   000012   ........     CALLA   #Display_Update
+     27                 update_display = TRUE;
+   \   000016   D243....     MOV.B   #0x1, &update_display
+     28                 lcd_update_count = RESET_STATE; 
+   \   00001A   8243....     MOV.W   #0x0, &lcd_update_count
+     29              }
+     30              
+     31            /*  if(timer > ONE_SEC_COUNT){                        // every 1s
+     32                timer_count++;
+     33                timer = RESET_VALUE;
+     34               }         
+     35          */
+     36              
+     37          }
+   \                     ??timer_polling_0:
+   \   00001E   1001         RETA
+     38          
+     39          //-----------------------------------------------------------------------------
+
+   \                                 In  segment CODE, align 2
+     40          void Init_Timer_A0(void) {
+   \                     Init_Timer_A0:
+     41          
+     42          // Timer A0 initialization sets up both A0_0, A0_1-A0_2 and overflow  
+     43          TA0CTL =  TASSEL__SMCLK;         // SMCLK source
+   \   000000   B24000024003 MOV.W   #0x200, &0x340
+     44          TA0CTL |= TACLR;                // Resets TA0R, clock divider, count direction
+   \   000006   A2D24003     BIS.W   #0x4, &0x340
+     45          TA0CTL |= MC__CONTINOUS;        // Continuous up
+   \   00000A   B2D020004003 BIS.W   #0x20, &0x340
+     46          TA0CTL |= ID__8;                // Divide clock by 8
+   \   000010   B2D0C0004003 BIS.W   #0xc0, &0x340
+     47          TA0EX0 =  TAIDEX__8;             // Divide clock by an additional 8
+   \   000016   B24007006003 MOV.W   #0x7, &0x360
+     48          
+     49          
+     50          TA0CCR0 = TA0CCR0_INTERVAL;     // 50 ms
+   \   00001C   B2406A185203 MOV.W   #0x186a, &0x352
+     51          TA0CCTL0 |= CCIE;               // CCR0 enable interrupt
+   \   000022   B2D010004203 BIS.W   #0x10, &0x342
+     52          
+     53          TA0CCR1 = TA0CCR1_INTERVAL;     // 100ms
+   \   000028   B240D4305403 MOV.W   #0x30d4, &0x354
+     54          //TA0CCTL1 |= CCIE;             // CCR1 enable interrupt
+     55            
+     56          TA0CCR2 = TA0CCR2_INTERVAL;  // CCR2 = 100ms
+   \   00002E   B24071025603 MOV.W   #0x271, &0x356
+     57          TA0CCTL2 |= CCIE;            // CCR2 enable interrupt
+   \   000034   B2D010004603 BIS.W   #0x10, &0x346
+     58          
+     59          TA0CTL &= ~TAIE; // Disable Overflow Interrupt
+   \   00003A   A2C34003     BIC.W   #0x2, &0x340
+     60          TA0CTL &= ~TAIFG; // Clear Overflow Interrupt flag
+   \   00003E   92C34003     BIC.W   #0x1, &0x340
+     61          
+     62          }
+   \   000042   1001         RETA
+   \   000044                REQUIRE _A_TA0CTL_L
+   \   000044                REQUIRE _A_TA0EX0_L
+   \   000044                REQUIRE _A_TA0CCR0_L
+   \   000044                REQUIRE _A_TA0CCTL0_L
+   \   000044                REQUIRE _A_TA0CCR1_L
+   \   000044                REQUIRE _A_TA0CCR2_L
+   \   000044                REQUIRE _A_TA0CCTL2_L
+     63          
+     64          
+     65          
+
+   \                                 In  segment CODE, align 2
+     66          void Init_Timer_B0(void) {
+   \                     Init_Timer_B0:
+     67          //------------------------------------------------------------------------------
+     68          // SMCLK source, up count mode, PWM Right Side
+     69          // TB0.3 P3.4 L_REVERSE TB0.1 P3.6 R_REVERSE
+     70          // TB0.4 P3.5 L_FORWARD TB0.2 P3.7 R_FORWARD
+     71          //------------------------------------------------------------------------------
+     72              TB0CTL = TBSSEL__SMCLK;             // SMCLK
+   \   000000   B2400002C003 MOV.W   #0x200, &0x3c0
+     73              TB0CTL |= MC__UP;                   // Up Mode 
+   \   000006   B2D01000C003 BIS.W   #0x10, &0x3c0
+     74              TB0CTL |= TBCLR;                    // Clear TAR
+   \   00000C   A2D2C003     BIS.W   #0x4, &0x3c0
+     75              
+     76              TB0CCR0 = WHEEL_PERIOD;             // PWM Period
+   \   000010   B2401027D203 MOV.W   #0x2710, &0x3d2
+     77              
+     78              TB0CCTL3 = OUTMOD_7;                // CCR1 reset/set
+   \   000016   B240E000C803 MOV.W   #0xe0, &0x3c8
+     79              LEFT_REVERSE_SPEED = WHEEL_OFF;     // P3.4 Left Reverse PWM duty cycle
+   \   00001C   8243DC03     MOV.W   #0x0, &0x3dc
+     80              
+     81              TB0CCTL4 = OUTMOD_7;                // CCR2 reset/set 
+   \   000020   B240E000CA03 MOV.W   #0xe0, &0x3ca
+     82              LEFT_FORWARD_SPEED = WHEEL_OFF;     // P3.5 Left Forward PWM duty cycle
+   \   000026   8243DE03     MOV.W   #0x0, &0x3de
+     83              
+     84              TB0CCTL5 = OUTMOD_7;                // CCR1 reset/set
+   \   00002A   B240E000CC03 MOV.W   #0xe0, &0x3cc
+     85              RIGHT_REVERSE_SPEED = WHEEL_OFF;    // P3.6 Right Reverse PWM duty cycle
+   \   000030   8243D803     MOV.W   #0x0, &0x3d8
+     86              
+     87              TB0CCTL6 = OUTMOD_7;                // CCR2 reset/set
+   \   000034   B240E000CE03 MOV.W   #0xe0, &0x3ce
+     88              RIGHT_FORWARD_SPEED = WHEEL_OFF;    // P3.7 Right Forward PWM duty cycle
+   \   00003A   8243DA03     MOV.W   #0x0, &0x3da
+     89          //------------------------------------------------------------------------------
+     90          }
+   \   00003E   1001         RETA
+   \   000040                REQUIRE _A_TB0CTL_L
+   \   000040                REQUIRE _A_TB0CCR0_L
+   \   000040                REQUIRE _A_TB0CCTL3_L
+   \   000040                REQUIRE _A_TB0CCR5_L
+   \   000040                REQUIRE _A_TB0CCTL4_L
+   \   000040                REQUIRE _A_TB0CCR6_L
+   \   000040                REQUIRE _A_TB0CCTL5_L
+   \   000040                REQUIRE _A_TB0CCR3_L
+   \   000040                REQUIRE _A_TB0CCTL6_L
+   \   000040                REQUIRE _A_TB0CCR4_L
+     91          
+     92          
+     93          
+
+   \                                 In  segment CODE, align 2
+     94          void Init_Timers(void){
+   \                     Init_Timers:
+     95            Init_Timer_A0();
+   \   000000   ........     CALLA   #Init_Timer_A0
+     96            Init_Timer_B0();
+   \   000004   ........     BRA     #Init_Timer_B0
+     97          }
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   Init_Timer_A0
+      4   Init_Timer_B0
+      4   Init_Timers
+        4   -> Init_Timer_A0
+        0   -> Init_Timer_B0
+      4   timer_polling
+        4   -> Display_Update
+        4   -> enable_display_update
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      68  Init_Timer_A0
+      64  Init_Timer_B0
+       8  Init_Timers
+       2  _A_TA0CCR0_L
+       2  _A_TA0CCR1_L
+       2  _A_TA0CCR2_L
+       2  _A_TA0CCTL0_L
+       2  _A_TA0CCTL2_L
+       2  _A_TA0CTL_L
+       2  _A_TA0EX0_L
+       2  _A_TB0CCR0_L
+       2  _A_TB0CCR3_L
+       2  _A_TB0CCR4_L
+       2  _A_TB0CCR5_L
+       2  _A_TB0CCR6_L
+       2  _A_TB0CCTL3_L
+       2  _A_TB0CCTL4_L
+       2  _A_TB0CCTL5_L
+       2  _A_TB0CCTL6_L
+       2  _A_TB0CTL_L
+      32  timer_polling
+
+ 
+ 172 bytes in segment CODE
+  34 bytes in segment DATA16_AN
+ 
+ 172 bytes of CODE memory
+   0 bytes of DATA memory (+ 34 bytes shared)
+
+Errors: none
+Warnings: none

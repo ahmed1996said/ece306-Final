@@ -1,0 +1,222 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.1.987/W32 for MSP430           04/Dec/2018  11:06:28
+# Copyright 1996-2018 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\clocks.c
+#    Command line  =  
+#        -f C:\Users\Ahmed\AppData\Local\Temp\EW6852.tmp
+#        ("C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\clocks.c"
+#        -lC "C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List" -o "C:\Users\Ahmed\Desktop\Project 10- New
+#        Approach\Project 10\Debug\Obj" --no_cse --no_unroll --no_inline
+#        --no_code_motion --no_tbaa --debug -D__MSP430FR5994__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.0\430\lib\dlib\dl430xlsfn.h" --core=430X --data_model=small -On
+#        --multiplier=32 --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List\clocks.lst
+#    Object file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\Obj\clocks.r43
+#
+###############################################################################
+
+C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\clocks.c
+      1          //------------------------------------------------------------------------------
+      2          //
+      3          //  Description: This file contains the Clock Initialization
+      4          //
+      5          //  Ahmed Al Mahrooqi
+      6          //  Sept 2018
+      7          //  Built with IAR Embedded Workbench Version: V4.10A/W32 (7.12.1)
+      8          //------------------------------------------------------------------------------
+      9          
+     10          //------------------------------------------------------------------------------
+     11          #include  "msp430.h"
+
+   \                                 In  segment DATA16_AN, at 0x160
+   \   union <unnamed> _A_CSCTL0_L
+   \                     _A_CSCTL0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x162
+   \   union <unnamed> _A_CSCTL1_L
+   \                     _A_CSCTL1_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x164
+   \   union <unnamed> _A_CSCTL2_L
+   \                     _A_CSCTL2_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x166
+   \   union <unnamed> _A_CSCTL3_L
+   \                     _A_CSCTL3_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x168
+   \   union <unnamed> _A_CSCTL4_L
+   \                     _A_CSCTL4_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x16a
+   \   union <unnamed> _A_CSCTL5_L
+   \                     _A_CSCTL5_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x102
+   \   union <unnamed> _A_SFRIFG1_L
+   \                     _A_SFRIFG1_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x15c
+   \   union <unnamed> _A_WDTCTL_L
+   \                     _A_WDTCTL_L:
+   \   000000                DS8 2
+     12          #include  "macros.h"
+     13          
+     14          //MACROS========================================================================
+     15          #define FLLN_BITS          (0x03ffu)
+     16          #define FLLN_255           (0x00ffu)
+     17          #define CSLOCK             (0x01) // Any incorrect password locks registers
+     18          
+     19          // Port J Pins
+     20          #define XINR                 (0x10) // XINR
+     21          #define XOUTR                (0x20) // XOUTR
+     22          #define CLEAR_REGISTER     (0X0000)
+     23          
+     24          void Init_Clocks(void);
+     25          
+
+   \                                 In  segment CODE, align 2
+     26          void Init_Clocks(void){
+   \                     Init_Clocks:
+     27          //------------------------------------------------------------------------------
+     28          // Clock Configurtaions
+     29          // This is the clock initialization for the program.
+     30          //
+     31          // Initial clock configuration, runs immediately after boot.
+     32          // Disables 1ms watchdog timer,
+     33          //      configure MCLK to 8MHz
+     34          //      configure SMCLK to 8MHz.
+     35          // Since the X1 oscillator is not currently connected,
+     36          // X1CLK is an unknown speed (probably ~10kHz).
+     37          //------------------------------------------------------------------------------
+     38            WDTCTL = WDTPW | WDTHOLD;  // Disable watchdog
+   \   000000   B240805A5C01 MOV.W   #0x5a80, &0x15c
+     39          //  PJSEL0 |= XINR;
+     40          //  PJSEL0 |= XOUTR;
+     41          
+     42          // Clocks:
+     43          // Clock System Control 0 Register
+     44            CSCTL0 = CSKEY;            // Unlock register
+   \   000006   B24000A56001 MOV.W   #0xa500, &0x160
+     45          
+     46          // Clock System Control 1 Register
+     47            CSCTL1 = CLEAR_REGISTER;   // Clear register
+   \   00000C   82436201     MOV.W   #0x0, &0x162
+     48            CSCTL1 = DCOFSEL_6;        // Set DCO setting for 8MHz
+   \   000010   B2400C006201 MOV.W   #0xc, &0x162
+     49          //  CSCTL1 &= ~DCORSEL;        // DCO range select. For high-speed devices,
+     50                                       // this bit can be written by the user.
+     51                                       // For low-speed devices, it is always reset.
+     52          
+     53          // Clock System Control 2 Register
+     54            CSCTL2 = CLEAR_REGISTER;   // Clear register
+   \   000016   82436401     MOV.W   #0x0, &0x164
+     55            CSCTL2 |= SELA__LFXTCLK;
+   \   00001A   924264016401 MOV.W   &0x164, &0x164
+     56            CSCTL2 |= SELS__DCOCLK;
+   \   000020   B2D030006401 BIS.W   #0x30, &0x164
+     57            CSCTL2 |= SELM__DCOCLK;
+   \   000026   B2D003006401 BIS.W   #0x3, &0x164
+     58          
+     59          // Clock System Control 3 Register
+     60            CSCTL3 = CLEAR_REGISTER;   // Clear register
+   \   00002C   82436601     MOV.W   #0x0, &0x166
+     61            CSCTL3 |= DIVA__1;         // set ACLK clock divider /1
+   \   000030   924266016601 MOV.W   &0x166, &0x166
+     62            CSCTL3 |= DIVS__1;         // set SMCLK clock divider /1
+   \   000036   924266016601 MOV.W   &0x166, &0x166
+     63            CSCTL3 |= DIVM__1;         // set MCLK clock divider /1
+   \   00003C   924266016601 MOV.W   &0x166, &0x166
+     64          
+     65          // Clock System Control 4 Register
+     66          //  CSCTL4 = CLEAR_REGISTER;   // Clear register
+     67            CSCTL4 &= ~LFXTOFF;        // Enable LFXT1
+   \   000042   92C36801     BIC.W   #0x1, &0x168
+     68          
+     69            do
+     70            {
+     71              CSCTL5 &= ~LFXTOFFG;     // Clear XT1 fault flag
+   \                     ??Init_Clocks_0:
+   \   000046   92C36A01     BIC.W   #0x1, &0x16a
+     72              SFRIFG1 &= ~OFIFG;
+   \   00004A   A2C30201     BIC.W   #0x2, &0x102
+     73            } while (SFRIFG1 & OFIFG); // Test oscillator fault flag
+   \   00004E   A2B30201     BIT.W   #0x2, &0x102
+   \   000052   F92F         JC      ??Init_Clocks_0
+     74          
+     75          //  CSCTL0 = CSLOCK;           // Lock registers
+     76            CSCTL0_H = RESET_STATE;              // Lock CS registers
+   \   000054   C2436101     MOV.B   #0x0, &0x161
+     77          
+     78          
+     79          
+     80          //------------------------------------------------------------------------------
+     81          }
+   \   000058   1001         RETA
+   \   00005A                REQUIRE _A_WDTCTL_L
+   \   00005A                REQUIRE _A_CSCTL0_L
+   \   00005A                REQUIRE _A_CSCTL1_L
+   \   00005A                REQUIRE _A_CSCTL2_L
+   \   00005A                REQUIRE _A_CSCTL3_L
+   \   00005A                REQUIRE _A_CSCTL4_L
+   \   00005A                REQUIRE _A_CSCTL5_L
+   \   00005A                REQUIRE _A_SFRIFG1_L
+     82          
+     83          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   Init_Clocks
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      90  Init_Clocks
+       2  _A_CSCTL0_L
+       2  _A_CSCTL1_L
+       2  _A_CSCTL2_L
+       2  _A_CSCTL3_L
+       2  _A_CSCTL4_L
+       2  _A_CSCTL5_L
+       2  _A_SFRIFG1_L
+       2  _A_WDTCTL_L
+
+ 
+ 90 bytes in segment CODE
+ 16 bytes in segment DATA16_AN
+ 
+ 90 bytes of CODE memory
+  0 bytes of DATA memory (+ 16 bytes shared)
+
+Errors: none
+Warnings: none

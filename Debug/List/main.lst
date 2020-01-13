@@ -1,0 +1,862 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.1.987/W32 for MSP430           04/Dec/2018  11:06:29
+# Copyright 1996-2018 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\main.c
+#    Command line  =  
+#        -f C:\Users\Ahmed\AppData\Local\Temp\EW6D8C.tmp
+#        ("C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\main.c"
+#        -lC "C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List" -o "C:\Users\Ahmed\Desktop\Project 10- New
+#        Approach\Project 10\Debug\Obj" --no_cse --no_unroll --no_inline
+#        --no_code_motion --no_tbaa --debug -D__MSP430FR5994__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.0\430\lib\dlib\dl430xlsfn.h" --core=430X --data_model=small -On
+#        --multiplier=32 --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List\main.lst
+#    Object file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\Obj\main.r43
+#
+###############################################################################
+
+C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\main.c
+      1          //------------------------------------------------------------------------------
+      2          //
+      3          //  Description: This file contains the Main Routine - "While" Operating System
+      4          //
+      5          //
+      6          //  Ahmed Al Mahrooqi
+      7          //  Sep 2018
+      8          //  Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (7.12.1)
+      9          //------------------------------------------------------------------------------
+     10          
+     11          //------------------------------------------------------------------------------
+     12          #include  "msp430.h"
+
+   \                                 In  segment DATA16_AN, at 0x222
+   \   union <unnamed> _A_PBOUT_L
+   \                     _A_PBOUT_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x242
+   \   union <unnamed> _A_PCOUT_L
+   \                     _A_PCOUT_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x262
+   \   union <unnamed> _A_PDOUT_L
+   \                     _A_PDOUT_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x130
+   \   union <unnamed> _A_PM5CTL0_L
+   \                     _A_PM5CTL0_L:
+   \   000000                DS8 2
+     13          #include  "functions.h"
+     14          #include  <string.h>
+
+   \                                 In  segment CODE, align 2
+   \   __intrinsic __nounwind __cc_version2 char *strstr(char const *, char const *)
+   \                     strstr:
+   \   000000   1B15         PUSHM.W #0x2, R11
+   \   000002   0A4C         MOV.W   R12, R10
+   \   000004   0B4D         MOV.W   R13, R11
+   \   000006   0D4B         MOV.W   R11, R13
+   \   000008   0C4A         MOV.W   R10, R12
+   \   00000A   ........     CALLA   #__iar_Strstr
+   \   00000E   1A17         POPM.W  #0x2, R11
+   \   000010   1001         RETA
+     15          #include  "macros.h"
+     16          
+     17          // Global Variables
+     18          
+     19          extern char display_line[LCD_LINES][LCD_CHAR_NUM];
+     20          extern char *display[LCD_LINES];
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     21          unsigned char display_mode;
+   \                     display_mode:
+   \   000000                DS8 1
+     22          extern volatile unsigned char display_changed;
+     23          extern volatile unsigned char update_display;
+     24          extern volatile unsigned int update_display_count;
+     25          extern volatile unsigned int Time_Sequence;
+     26          extern volatile unsigned int lcd_update_count;
+     27          extern volatile unsigned int b1;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     28          unsigned int intercept_flag=RESET_VALUE;
+   \                     intercept_flag:
+   \   000000                DS8 2
+     29          
+     30          
+     31          extern volatile unsigned int b2 ;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     32          volatile unsigned int b2_count=RESET_VALUE;
+   \                     b2_count:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     33          volatile unsigned int b1_count=RESET_VALUE;
+   \                     b1_count:
+   \   000000                DS8 2
+     34          extern volatile unsigned int led_blink_count;
+     35          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     36          volatile unsigned int timer_count=RESET_VALUE;
+   \                     timer_count:
+   \   000000                DS8 2
+     37          
+     38          extern volatile unsigned int ADC_Thumb;
+     39          extern volatile unsigned int ADC_Right_Detector;
+     40          extern volatile unsigned int ADC_Left_Detector;
+     41          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     42          volatile unsigned int state = RESET_VALUE;
+   \                     state:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     43          unsigned int start_sampling = RESET_VALUE;
+   \                     start_sampling:
+   \   000000                DS8 2
+     44          extern volatile char one_time;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     45          unsigned volatile int debounce_count = RESET_STATE;
+   \                     debounce_count:
+   \   000000                DS8 2
+     46          
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     47          char pwm_state;
+   \                     pwm_state:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     48          char chosen_direction;
+   \                     chosen_direction:
+   \   000000                DS8 1
+     49          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     50          unsigned int cutoff;
+   \                     cutoff:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     51          volatile unsigned int timer;
+   \                     timer:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     52          unsigned int step3_done=RESET_VALUE;
+   \                     step3_done:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     53          unsigned int temp_time=RESET_STATE;
+   \                     temp_time:
+   \   000000                DS8 2
+     54          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     55          unsigned volatile int UCA3_index;
+   \                     UCA3_index:
+   \   000000                DS8 2
+     56          
+     57          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     58          volatile unsigned int transmit_done;
+   \                     transmit_done:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     59          unsigned int j;
+   \                     j:
+   \   000000                DS8 2
+     60          extern unsigned int recieved_flag_A0;
+     61          extern unsigned int recieved_flag_A3;
+     62          
+     63          extern unsigned char rx_temp_A0;
+     64          extern unsigned char rx_temp_A3;
+     65          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     66          unsigned int A0_index=0;
+   \                     A0_index:
+   \   000000                DS8 2
+     67          extern volatile char A0_Char_Rx[SMALL_RING_SIZE];
+     68          extern volatile char A3_Char_Rx[SMALL_RING_SIZE];
+     69          
+     70          extern volatile unsigned int A3_rx_ring_wr;
+     71          extern volatile unsigned int A0_rx_ring_wr;
+     72          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     73          volatile unsigned int command_complete_A3=RESET_VALUE;
+   \                     command_complete_A3:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     74          volatile unsigned int command_recieved_A3=RESET_VALUE;
+   \                     command_recieved_A3:
+   \   000000                DS8 2
+     75          
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     76          char process_buffer[SMALL_RING_SIZE];
+   \                     process_buffer:
+   \   000000                DS8 16
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     77          unsigned int temp_index=RESET_VALUE;
+   \                     temp_index:
+   \   000000                DS8 2
+     78          extern unsigned int A0_recieve_complete;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     79          unsigned int cmd_index;
+   \                     cmd_index:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     80          unsigned int time_requested;
+   \                     time_requested:
+   \   000000                DS8 2
+     81          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     82          unsigned int current_thumb;
+   \                     current_thumb:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     83          char option;
+   \                     option:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     84          unsigned int password=RESET_VALUE;
+   \                     password:
+   \   000000                DS8 2
+     85          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     86          volatile unsigned int command_complete;
+   \                     command_complete:
+   \   000000                DS8 2
+     87          extern volatile unsigned int command_index;
+     88          extern volatile unsigned int command_recieved;
+
+   \                                 In  segment DATA16_I, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_copy
+     89          unsigned int menu_on=TRUE;
+   \                     menu_on:
+   \   000000                DS8 2
+   \   000002                REQUIRE `?<Initializer for menu_on>`
+     90          extern char process_buffer3[SMALL_RING_SIZE];
+     91          
+     92          extern char ip_address[SMALL_RING_SIZE];
+     93          extern unsigned int ip_found;
+     94          extern unsigned int index_a3;
+     95          extern char command_buffer3[CMD_BUFFER_SIZE];
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     96          unsigned int a;
+   \                     `a`:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     97          unsigned int b;
+   \                     `b`:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     98          unsigned int c;
+   \                     c:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     99          unsigned int ii;
+   \                     ii:
+   \   000000                DS8 2
+    100          extern unsigned int caret_index[CARET_BUFFER];
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+    101          volatile unsigned int cmd_cnt;
+   \                     cmd_cnt:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+    102          unsigned int temp_right;
+   \                     temp_right:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+    103          unsigned int temp_left;
+   \                     temp_left:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_I, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_copy
+    104          unsigned int white=1850;
+   \                     white:
+   \   000000                DS8 2
+   \   000002                REQUIRE `?<Initializer for white>`
+
+   \                                 In  segment DATA16_I, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_copy
+    105          unsigned int black=3200;
+   \                     black:
+   \   000000                DS8 2
+   \   000002                REQUIRE `?<Initializer for black>`
+
+   \                                 In  segment DATA16_I, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_copy
+    106          unsigned int gray =2525;
+   \                     gray:
+   \   000000                DS8 2
+   \   000002                REQUIRE `?<Initializer for gray>`
+    107          extern char arch;
+
+   \                                 In  segment DATA16_I, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_copy
+    108          unsigned int adc_on=TRUE;
+   \                     adc_on:
+   \   000000                DS8 2
+   \   000002                REQUIRE `?<Initializer for adc_on>`
+    109          
+
+   \                                 In  segment CODE, align 2
+    110          void main(void){
+   \                     main:
+    111          //------------------------------------------------------------------------------
+    112          // Main Program
+    113          // This is the main routine for the program. Execution of code starts here.
+    114          // The operating system is Back Ground Fore Ground.
+    115          //
+    116          //------------------------------------------------------------------------------
+    117          // Disable the GPIO power-on default high-impedance mode to activate
+    118          // previously configured port settings
+    119            PM5CTL0 &= ~LOCKLPM5;
+   \   000000   92C33001     BIC.W   #0x1, &0x130
+    120            Init_Ports();                        // Initialize Ports
+   \   000004   ........     CALLA   #Init_Ports
+    121            Init_Clocks();                       // Initialize Clock System
+   \   000008   ........     CALLA   #Init_Clocks
+    122            Init_Conditions();                   // Initialize Variokaakmnqh1ables and Initial Conditions
+   \   00000C   ........     CALLA   #Init_Conditions
+    123            Init_Timers();                       // Initialize Timers
+   \   000010   ........     CALLA   #Init_Timers
+    124            Init_LCD();                          // Initialize LCD
+   \   000014   ........     CALLA   #Init_LCD
+    125            Init_ADC();                          // Initialize ADC configurations
+   \   000018   ........     CALLA   #Init_ADC
+    126            Init_LEDs();                         // Initialize LEDs
+   \   00001C   ........     CALLA   #Init_LEDs
+    127            clear_display();                     
+   \   000020   ........     CALLA   #clear_display
+    128            Init_Serial();
+   \   000024   ........     CALLA   #Init_Serial
+    129            lcd_BIG_mid();
+   \   000028   ........     CALLA   #lcd_BIG_mid
+    130            
+    131          // Place the contents of what you want on the display, in between the quotes
+    132          // Limited to 10 characters per line
+    133           //clear_display();
+    134          
+    135            enable_display_update();
+   \   00002C   ........     CALLA   #enable_display_update
+    136            Display_Update(LCD_LINE0,LCD_LINE0,LCD_LINE0,LCD_LINE0);
+   \   000030   4F43         MOV.B   #0x0, R15
+   \   000032   4E43         MOV.B   #0x0, R14
+   \   000034   4D43         MOV.B   #0x0, R13
+   \   000036   4C43         MOV.B   #0x0, R12
+   \   000038   ........     CALLA   #Display_Update
+    137            P5OUT &= ~LCD_BACKLITE; 
+   \   00003C   F2C080004202 BIC.B   #0x80, &0x242
+    138            command_recieved = RESET_VALUE;
+   \   000042   8243....     MOV.W   #0x0, &command_recieved
+    139            
+    140          //------------------------------------------------------------------------------
+    141          // Begining of the "While" Operating System
+    142          //------------------------------------------------------------------------------
+    143          
+    144            while(ALWAYS) {                      
+    145          
+    146          
+    147          // Commands recieved from IoT    
+    148           if(command_complete_A3)
+   \                     ??main_0:
+   \   000046   8293....     CMP.W   #0x0, &command_complete_A3
+   \   00004A   0224         JEQ     ??main_3
+    149             service_IOT_command();
+   \   00004C   ........     CALLA   #service_IOT_command
+    150           
+    151          // Intercept line 
+    152           if(intercept_flag)
+   \                     ??main_3:
+   \   000050   8293....     CMP.W   #0x0, &intercept_flag
+   \   000054   0224         JEQ     ??main_4
+    153              intercept_and_follow();
+   \   000056   ........     CALLA   #intercept_and_follow
+    154                
+    155          // Show IP Address
+    156           if(ip_found)
+   \                     ??main_4:
+   \   00005A   8293....     CMP.W   #0x0, &ip_found
+   \   00005E   0224         JEQ     ??main_5
+    157              print_ip_address();
+   \   000060   ........     CALLA   #print_ip_address
+    158          
+    159          // Auto-reconnect when dissociated
+    160           if( strstr(process_buffer3,"Dis")||strstr(process_buffer3,"DIS") )
+   \                     ??main_5:
+   \   000064   3D40....     MOV.W   #`?<Constant "Dis">`, R13
+   \   000068   3C40....     MOV.W   #process_buffer3, R12
+   \   00006C   ........     CALLA   #strstr
+   \   000070   0C93         CMP.W   #0x0, R12
+   \   000072   0820         JNE     ??main_6
+   \   000074   3D40....     MOV.W   #`?<Constant "DIS">`, R13
+   \   000078   3C40....     MOV.W   #process_buffer3, R12
+   \   00007C   ........     CALLA   #strstr
+   \   000080   0C93         CMP.W   #0x0, R12
+   \   000082   0224         JEQ     ??main_7
+    161             reconnect_connection();  
+   \                     ??main_6:
+   \   000084   ........     CALLA   #reconnect_connection
+    162           
+    163           
+    164          // BUTTON 1 POLLING 
+    165           if(b1){   
+   \                     ??main_7:
+   \   000088   8293....     CMP.W   #0x0, &b1
+   \   00008C   9924         JEQ     ??main_8
+    166            // When button 1 pressed, perform action depending on option selected on menu   
+    167              switch(option){     
+   \   00008E   5E42....     MOV.B   &option, R14
+   \   000092   7E804200     SUB.B   #0x42, R14
+   \   000096   6D24         JEQ     ??main_9
+   \   000098   7E800E00     SUB.B   #0xe, R14
+   \   00009C   4124         JEQ     ??main_10
+   \   00009E   6E83         SUB.B   #0x2, R14
+   \   0000A0   3124         JEQ     ??main_11
+   \   0000A2   6E83         SUB.B   #0x2, R14
+   \   0000A4   1024         JEQ     ??main_12
+   \   0000A6   7E800300     SUB.B   #0x3, R14
+   \   0000AA   3D24         JEQ     ??main_13
+   \   0000AC   7E801C00     SUB.B   #0x1c, R14
+   \   0000B0   8520         JNE     ??main_1
+    168                case START:
+    169                      menu_on=RESET_VALUE;
+   \   0000B2   8243....     MOV.W   #0x0, &menu_on
+    170                      adc_on = RESET_VALUE;
+   \   0000B6   8243....     MOV.W   #0x0, &adc_on
+    171                      display_string_line(LCD_LINE1,"  Wait...");
+   \   0000BA   3D40....     MOV.W   #`?<Constant "  Wait...">`, R13
+   \   0000BE   1C43         MOV.W   #0x1, R12
+   \   0000C0   ........     CALLA   #display_string_line
+    172                     break;
+   \   0000C4   7B3C         JMP     ??main_1
+    173                     
+    174                case TCP:              //establish TCP connection on specified port 
+    175                     out_string_A3("AT+NSTCP=9228,1");
+   \                     ??main_12:
+   \   0000C6   3C40....     MOV.W   #`?<Constant "AT+NSTCP=9228,1">`, R12
+   \   0000CA   ........     CALLA   #out_string_A3
+    176                     wait_100ms(TWO_COUNTS);
+   \   0000CE   2C43         MOV.W   #0x2, R12
+   \   0000D0   ........     CALLA   #wait_100ms
+    177                     if(strstr(process_buffer3,"OK")){
+   \   0000D4   3D40....     MOV.W   #`?<Constant "OK">`, R13
+   \   0000D8   3C40....     MOV.W   #process_buffer3, R12
+   \   0000DC   ........     CALLA   #strstr
+   \   0000E0   0C93         CMP.W   #0x0, R12
+   \   0000E2   0B24         JEQ     ??main_14
+    178                      display_string_line(LCD_LINE2,"   OK");
+   \   0000E4   3D40....     MOV.W   #`?<Constant "   OK">`, R13
+   \   0000E8   2C43         MOV.W   #0x2, R12
+   \   0000EA   ........     CALLA   #display_string_line
+    179                      wait_100ms(FOUR_COUNTS);
+   \   0000EE   2C42         MOV.W   #0x4, R12
+   \   0000F0   ........     CALLA   #wait_100ms
+    180                      clear_display_line(LCD_LINE2); 
+   \   0000F4   2C43         MOV.W   #0x2, R12
+   \   0000F6   ........     CALLA   #clear_display_line
+    181                     }
+    182                     out_string_A3("AT+WKEEPALIVE=10");
+   \                     ??main_14:
+   \   0000FA   3C40....     MOV.W   #`?<Constant "AT+WKEEPALIVE=10">`, R12
+   \   0000FE   ........     CALLA   #out_string_A3
+    183                     break;
+   \   000102   5C3C         JMP     ??main_1
+    184                     
+    185                case IOTRST:          //Release IOT_RESET
+    186                     P3OUT  |=  IOT_RESET;
+   \                     ??main_11:
+   \   000104   D2D32202     BIS.B   #0x1, &0x222
+    187                     display_string_line(LCD_LINE2,"   DONE!");
+   \   000108   3D40....     MOV.W   #`?<Constant "   DONE!">`, R13
+   \   00010C   2C43         MOV.W   #0x2, R12
+   \   00010E   ........     CALLA   #display_string_line
+    188                     wait_100ms(TWO_COUNTS);
+   \   000112   2C43         MOV.W   #0x2, R12
+   \   000114   ........     CALLA   #wait_100ms
+    189                     clear_display_line(LCD_LINE2);
+   \   000118   2C43         MOV.W   #0x2, R12
+   \   00011A   ........     CALLA   #clear_display_line
+    190                     break;
+   \   00011E   4E3C         JMP     ??main_1
+    191                     
+    192                case SHOWIP:          //Show IP Address
+    193                     ip_found=TRUE;
+   \                     ??main_10:
+   \   000120   9243....     MOV.W   #0x1, &ip_found
+    194                     break;
+   \   000124   4B3C         JMP     ??main_1
+    195                     
+    196                case CALW:          // calibrate white
+    197                      P8OUT  |= IR_LED;                   //turn IR LED on
+   \                     ??main_13:
+   \   000126   D2D36302     BIS.B   #0x1, &0x263
+    198                      wait_100ms(FOUR_COUNTS);    
+   \   00012A   2C42         MOV.W   #0x4, R12
+   \   00012C   ........     CALLA   #wait_100ms
+    199                      temp_right= ADC_Right_Detector;
+   \   000130   9242........ MOV.W   &ADC_Right_Detector, &temp_right
+    200                      temp_left=  ADC_Left_Detector;
+   \   000136   9242........ MOV.W   &ADC_Left_Detector, &temp_left
+    201                      P8OUT  &= ~IR_LED;
+   \   00013C   D2C36302     BIC.B   #0x1, &0x263
+    202                      white = (temp_right + temp_left) / 2;
+   \   000140   1F42....     MOV.W   &temp_right, R15
+   \   000144   1F52....     ADD.W   &temp_left, R15
+   \   000148   5F03         RRUM.W  #0x1, R15
+   \   00014A   824F....     MOV.W   R15, &white
+    203                      gray=(white+black)/2;
+   \   00014E   1F42....     MOV.W   &white, R15
+   \   000152   1F52....     ADD.W   &black, R15
+   \   000156   5F03         RRUM.W  #0x1, R15
+   \   000158   824F....     MOV.W   R15, &gray
+    204                      HEXtoBCD2(white);
+   \   00015C   1C42....     MOV.W   &white, R12
+   \   000160   ........     CALLA   #HEXtoBCD2
+    205                      wait_100ms(FOUR_COUNTS);
+   \   000164   2C42         MOV.W   #0x4, R12
+   \   000166   ........     CALLA   #wait_100ms
+    206                      clear_display_line(LCD_LINE2);
+   \   00016A   2C43         MOV.W   #0x2, R12
+   \   00016C   ........     CALLA   #clear_display_line
+    207                     break;
+   \   000170   253C         JMP     ??main_1
+    208                     
+    209                case CALB:          // calibrate black
+    210                      P8OUT  |= IR_LED;
+   \                     ??main_9:
+   \   000172   D2D36302     BIS.B   #0x1, &0x263
+    211                      wait_100ms(FOUR_COUNTS);
+   \   000176   2C42         MOV.W   #0x4, R12
+   \   000178   ........     CALLA   #wait_100ms
+    212                      temp_right= ADC_Right_Detector;
+   \   00017C   9242........ MOV.W   &ADC_Right_Detector, &temp_right
+    213                      temp_left=  ADC_Left_Detector;
+   \   000182   9242........ MOV.W   &ADC_Left_Detector, &temp_left
+    214                      P8OUT  &= ~IR_LED;
+   \   000188   D2C36302     BIC.B   #0x1, &0x263
+    215                      black = (temp_right + temp_left) / 2;
+   \   00018C   1F42....     MOV.W   &temp_right, R15
+   \   000190   1F52....     ADD.W   &temp_left, R15
+   \   000194   5F03         RRUM.W  #0x1, R15
+   \   000196   824F....     MOV.W   R15, &black
+    216                      gray=(white+black)/2;
+   \   00019A   1F42....     MOV.W   &white, R15
+   \   00019E   1F52....     ADD.W   &black, R15
+   \   0001A2   5F03         RRUM.W  #0x1, R15
+   \   0001A4   824F....     MOV.W   R15, &gray
+    217                      HEXtoBCD2(black);
+   \   0001A8   1C42....     MOV.W   &black, R12
+   \   0001AC   ........     CALLA   #HEXtoBCD2
+    218                      wait_100ms(FOUR_COUNTS);
+   \   0001B0   2C42         MOV.W   #0x4, R12
+   \   0001B2   ........     CALLA   #wait_100ms
+    219                      clear_display_line(LCD_LINE2);
+   \   0001B6   2C43         MOV.W   #0x2, R12
+   \   0001B8   ........     CALLA   #clear_display_line
+    220                     break;     
+    221              default:break;     
+    222             }
+    223                   b1 = RESET_STATE;
+   \                     ??main_1:
+   \   0001BC   8243....     MOV.W   #0x0, &b1
+    224            }
+    225              
+    226          // BUTTON 2 polling  
+    227            if(b2){                //go back to menu
+   \                     ??main_8:
+   \   0001C0   8293....     CMP.W   #0x0, &b2
+   \   0001C4   0A24         JEQ     ??main_15
+    228                    clear_display();
+   \   0001C6   ........     CALLA   #clear_display
+    229                    menu_on=TRUE;
+   \   0001CA   9243....     MOV.W   #0x1, &menu_on
+    230                    adc_on=TRUE;
+   \   0001CE   9243....     MOV.W   #0x1, &adc_on
+    231                    lcd_BIG_mid();
+   \   0001D2   ........     CALLA   #lcd_BIG_mid
+    232                b2 = RESET_STATE;
+   \   0001D6   8243....     MOV.W   #0x0, &b2
+    233              } 
+    234              
+    235              
+    236          // Thumbwheel menu polling   
+    237            if(menu_on)
+   \                     ??main_15:
+   \   0001DA   8293....     CMP.W   #0x0, &menu_on
+   \   0001DE   0224         JEQ     ??main_16
+    238              main_menu();
+   \   0001E0   ........     CALLA   #main_menu
+    239          
+    240          // Performs actions every 200ms  
+    241            timer_polling();               
+   \                     ??main_16:
+   \   0001E4   ........     CALLA   #timer_polling
+    242              
+    243           Display_Process();
+   \   0001E8   ........     CALLA   #Display_Process
+   \   0001EC   2C3F         JMP     ??main_0
+   \   0001EE   0343         NOP
+   \   0001F0                REQUIRE _A_PM5CTL0_L
+   \   0001F0                REQUIRE _A_PCOUT_L
+   \   0001F0                REQUIRE _A_PBOUT_L
+   \   0001F0                REQUIRE _A_PDOUT_L
+    244            } 
+    245          //------------------------------------------------------------------------------
+    246          }
+
+   \                                 In  segment DATA16_ID, align 2, align-sorted
+   \                     `?<Initializer for menu_on>`:
+   \   000000   0100         DC16 1
+
+   \                                 In  segment DATA16_ID, align 2, align-sorted
+   \                     `?<Initializer for white>`:
+   \   000000   3A07         DC16 1850
+
+   \                                 In  segment DATA16_ID, align 2, align-sorted
+   \                     `?<Initializer for black>`:
+   \   000000   800C         DC16 3200
+
+   \                                 In  segment DATA16_ID, align 2, align-sorted
+   \                     `?<Initializer for gray>`:
+   \   000000   DD09         DC16 2525
+
+   \                                 In  segment DATA16_ID, align 2, align-sorted
+   \                     `?<Initializer for adc_on>`:
+   \   000000   0100         DC16 1
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "Dis">`:
+   \   000000   44697300     DC8 "Dis"
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "DIS">`:
+   \   000000   44495300     DC8 "DIS"
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "  Wait...">`:
+   \   000000   202057616974 DC8 "  Wait..."
+   \            2E2E2E00    
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "AT+NSTCP=9228,1">`:
+   \   000000   41542B4E5354 DC8 "AT+NSTCP=9228,1"
+   \            43503D393232
+   \            382C3100    
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "OK">`:
+   \   000000   4F4B00       DC8 "OK"
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "   OK">`:
+   \   000000   2020204F4B00 DC8 "   OK"
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "AT+WKEEPALIVE=10">`:
+   \   000000   41542B574B45 DC8 "AT+WKEEPALIVE=10"
+   \            4550414C4956
+   \            453D313000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "   DONE!">`:
+   \   000000   202020444F4E DC8 "   DONE!"
+   \            452100      
+    247          
+    248          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   main
+        4   -> Display_Process
+        4   -> Display_Update
+        4   -> HEXtoBCD2
+        4   -> Init_ADC
+        4   -> Init_Clocks
+        4   -> Init_Conditions
+        4   -> Init_LCD
+        4   -> Init_LEDs
+        4   -> Init_Ports
+        4   -> Init_Serial
+        4   -> Init_Timers
+        4   -> clear_display
+        4   -> clear_display_line
+        4   -> display_string_line
+        4   -> enable_display_update
+        4   -> intercept_and_follow
+        4   -> lcd_BIG_mid
+        4   -> main_menu
+        4   -> out_string_A3
+        4   -> print_ip_address
+        4   -> reconnect_connection
+        4   -> service_IOT_command
+        4   -> strstr
+        4   -> timer_polling
+        4   -> wait_100ms
+      8   strstr
+        8   -> __iar_Strstr
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       9  ?<Constant "   DONE!">
+       6  ?<Constant "   OK">
+      10  ?<Constant "  Wait...">
+      16  ?<Constant "AT+NSTCP=9228,1">
+      17  ?<Constant "AT+WKEEPALIVE=10">
+       4  ?<Constant "DIS">
+       4  ?<Constant "Dis">
+       3  ?<Constant "OK">
+       2  ?<Initializer for adc_on>
+       2  ?<Initializer for black>
+       2  ?<Initializer for gray>
+       2  ?<Initializer for menu_on>
+       2  ?<Initializer for white>
+       2  A0_index
+       2  UCA3_index
+       2  _A_PBOUT_L
+       2  _A_PCOUT_L
+       2  _A_PDOUT_L
+       2  _A_PM5CTL0_L
+       2  a
+       2  adc_on
+       2  b
+       2  b1_count
+       2  b2_count
+       2  black
+       2  c
+       1  chosen_direction
+       2  cmd_cnt
+       2  cmd_index
+       2  command_complete
+       2  command_complete_A3
+       2  command_recieved_A3
+       2  current_thumb
+       2  cutoff
+       2  debounce_count
+       1  display_mode
+       2  gray
+       2  ii
+       2  intercept_flag
+       2  j
+     496  main
+       2  menu_on
+       1  option
+       2  password
+      16  process_buffer
+       1  pwm_state
+       2  start_sampling
+       2  state
+       2  step3_done
+      18  strstr
+       2  temp_index
+       2  temp_left
+       2  temp_right
+       2  temp_time
+       2  time_requested
+       2  timer
+       2  timer_count
+       2  transmit_done
+       2  white
+
+ 
+ 514 bytes in segment CODE
+   8 bytes in segment DATA16_AN
+  69 bytes in segment DATA16_C
+  10 bytes in segment DATA16_I
+  10 bytes in segment DATA16_ID
+  80 bytes in segment DATA16_Z
+ 
+ 496 bytes of CODE  memory (+ 18 bytes shared)
+  79 bytes of CONST memory
+  90 bytes of DATA  memory (+  8 bytes shared)
+
+Errors: none
+Warnings: none

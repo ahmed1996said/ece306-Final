@@ -1,0 +1,850 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.1.987/W32 for MSP430           04/Dec/2018  11:06:29
+# Copyright 1996-2018 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\movements.c
+#    Command line  =  
+#        -f C:\Users\Ahmed\AppData\Local\Temp\EW6EA7.tmp
+#        ("C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\movements.c" -lC "C:\Users\Ahmed\Desktop\Project 10- New
+#        Approach\Project 10\Debug\List" -o "C:\Users\Ahmed\Desktop\Project 10-
+#        New Approach\Project 10\Debug\Obj" --no_cse --no_unroll --no_inline
+#        --no_code_motion --no_tbaa --debug -D__MSP430FR5994__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.0\430\lib\dlib\dl430xlsfn.h" --core=430X --data_model=small -On
+#        --multiplier=32 --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List\movements.lst
+#    Object file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\Obj\movements.r43
+#
+###############################################################################
+
+C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\movements.c
+      1          //===========================================================================
+      2          // File Name : movements.c
+      3          //
+      4          // Description: This file contains car movement functions
+      5          //
+      6          // Author: Ahmed Al Mahrooqi
+      7          // Date: September 2018
+      8          // Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (7.12.1)
+      9          //===========================================================================
+     10          
+     11          
+     12          #include  "msp430.h"
+
+   \                                 In  segment DATA16_AN, at 0x262
+   \   union <unnamed> _A_PDOUT_L
+   \                     _A_PDOUT_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3d2
+   \   union <unnamed> _A_TB0CCR0_L
+   \                     _A_TB0CCR0_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3d8
+   \   union <unnamed> _A_TB0CCR3_L
+   \                     _A_TB0CCR3_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3da
+   \   union <unnamed> _A_TB0CCR4_L
+   \                     _A_TB0CCR4_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3dc
+   \   union <unnamed> _A_TB0CCR5_L
+   \                     _A_TB0CCR5_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x3de
+   \   union <unnamed> _A_TB0CCR6_L
+   \                     _A_TB0CCR6_L:
+   \   000000                DS8 2
+     13          #include  "functions.h"
+     14          #include  <string.h>
+     15          #include  "macros.h"
+     16          
+     17          
+     18          extern char display_line[LCD_LINES][LCD_CHAR_NUM];
+     19          extern char *display[LCD_LINES];
+     20          extern unsigned char display_mode;
+     21          extern volatile unsigned char display_changed;
+     22          extern volatile unsigned char update_display;
+     23          extern volatile unsigned int update_display_count;
+     24          extern volatile unsigned int ADC_Right_Detector;
+     25          extern volatile unsigned int ADC_Left_Detector;
+     26          extern volatile unsigned int left_white;
+     27          extern volatile unsigned int right_white;
+     28          extern volatile unsigned int timer;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     29          volatile unsigned int current_time=RESET_VALUE;
+   \                     current_time:
+   \   000000                DS8 2
+     30          extern unsigned int step3_done;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     31          signed int time_to_travel=RESET_STATE;
+   \                     time_to_travel:
+   \   000000                DS8 2
+     32          extern volatile unsigned int state ;
+     33          extern unsigned int intercept_flag;
+     34          extern unsigned int stop_flag;
+     35          extern unsigned int menu_on;
+     36          extern char arch;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     37          unsigned int forward_moving;
+   \                     forward_moving:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     38          unsigned int reverse_moving;
+   \                     reverse_moving:
+   \   000000                DS8 2
+     39          extern unsigned int black;
+     40          extern unsigned int white;
+     41          extern unsigned int gray;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     42          unsigned int dark_gray;
+   \                     dark_gray:
+   \   000000                DS8 2
+     43          extern volatile unsigned int er_stop;
+     44          
+     45          extern volatile unsigned int left_black;
+     46          extern volatile unsigned int right_black;
+     47          extern unsigned int temp_right;
+     48          extern unsigned int temp_left;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     49          unsigned int white_detected;
+   \                     white_detected:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     50          unsigned int first_state_done=RESET_STATE;
+   \                     first_state_done:
+   \   000000                DS8 2
+     51          
+     52          
+
+   \                                 In  segment CODE, align 2
+     53          void wheels_off(void){
+   \                     wheels_off:
+     54          // turns wheels off
+     55          LEFT_FORWARD_SPEED = WHEEL_OFF;        
+   \   000000   8243DE03     MOV.W   #0x0, &0x3de
+     56          RIGHT_FORWARD_SPEED = WHEEL_OFF;   
+   \   000004   8243DA03     MOV.W   #0x0, &0x3da
+     57          
+     58          LEFT_REVERSE_SPEED =  WHEEL_OFF; 
+   \   000008   8243DC03     MOV.W   #0x0, &0x3dc
+     59          RIGHT_REVERSE_SPEED = WHEEL_OFF;
+   \   00000C   8243D803     MOV.W   #0x0, &0x3d8
+     60          
+     61          }
+   \   000010   1001         RETA
+   \   000012                REQUIRE _A_TB0CCR6_L
+   \   000012                REQUIRE _A_TB0CCR4_L
+   \   000012                REQUIRE _A_TB0CCR5_L
+   \   000012                REQUIRE _A_TB0CCR3_L
+     62          
+     63          
+     64          
+
+   \                                 In  segment CODE, align 2
+     65          void exit_circle(void){
+   \                     exit_circle:
+     66          //this function performs the set of tasks to exit the circle and stop navigating line
+     67            
+     68            wheels_off();
+   \   000000   ........     CALLA   #wheels_off
+     69            P8OUT  &= ~IR_LED;         // turn IR_LED OFF
+   \   000004   D2C36302     BIC.B   #0x1, &0x263
+     70            TB0CCR0 = HI_WHEEL_PERIOD;
+   \   000008   B240204ED203 MOV.W   #0x4e20, &0x3d2
+     71            go_forward(THREE_SEC);
+   \   00000E   3C401E00     MOV.W   #0x1e, R12
+   \   000012   ........     CALLA   #go_forward
+     72            display_string_line(LCD_LINE1,"  DONE!!");  
+   \   000016   3D40....     MOV.W   #`?<Constant "  DONE!!">`, R13
+   \   00001A   1C43         MOV.W   #0x1, R12
+   \   00001C   ........     BRA     #display_string_line
+   \   000020                REQUIRE _A_PDOUT_L
+   \   000020                REQUIRE _A_TB0CCR0_L
+     73          
+     74          }
+     75          
+     76          
+
+   \                                 In  segment CODE, align 2
+     77          void follow(void){
+   \                     follow:
+     78          
+     79                TB0CCR0 = HI_WHEEL_PERIOD;
+   \   000000   B240204ED203 MOV.W   #0x4e20, &0x3d2
+     80                dark_gray = black-MARGIN;
+   \   000006   1F42....     MOV.W   &black, R15
+   \   00000A   3F50D4FE     ADD.W   #0xfed4, R15
+   \   00000E   824F....     MOV.W   R15, &dark_gray
+     81                RIGHT_REVERSE_SPEED = 7000;
+   \   000012   B240581BD803 MOV.W   #0x1b58, &0x3d8
+     82                LEFT_REVERSE_SPEED  = 7000; 
+   \   000018   B240581BDC03 MOV.W   #0x1b58, &0x3dc
+     83                
+     84                while(!er_stop){                                // run loop until stop signal recieved from IoT 
+   \                     ??follow_2:
+   \   00001E   8293....     CMP.W   #0x0, &er_stop
+   \   000022   2120         JNE     ??follow_3
+     85                      temp_right=ADC_Right_Detector;   
+   \   000024   9242........ MOV.W   &ADC_Right_Detector, &temp_right
+     86                      temp_left=ADC_Left_Detector;
+   \   00002A   9242........ MOV.W   &ADC_Left_Detector, &temp_left
+     87          
+     88          
+     89                      while(temp_left <= dark_gray){            // drifting to right
+   \                     ??follow_0:
+   \   000030   9292........ CMP.W   &temp_left, &dark_gray
+   \   000036   0628         JNC     ??follow_4
+     90                        temp_left=ADC_Left_Detector;      
+   \   000038   9242........ MOV.W   &ADC_Left_Detector, &temp_left
+     91                        RIGHT_REVERSE_SPEED = WHEEL_OFF;        // turn off R wheel until back on line
+   \   00003E   8243D803     MOV.W   #0x0, &0x3d8
+   \   000042   F63F         JMP     ??follow_0
+     92                      }
+     93                      RIGHT_REVERSE_SPEED = 7000;               // right wheel slower- try increasing changed from 5000
+   \                     ??follow_4:
+   \   000044   B240581BD803 MOV.W   #0x1b58, &0x3d8
+     94                      
+     95                      while(temp_right <= dark_gray){           // drifting to left
+   \                     ??follow_1:
+   \   00004A   9292........ CMP.W   &temp_right, &dark_gray
+   \   000050   0628         JNC     ??follow_5
+     96                        temp_right=ADC_Right_Detector;    
+   \   000052   9242........ MOV.W   &ADC_Right_Detector, &temp_right
+     97                        LEFT_REVERSE_SPEED=WHEEL_OFF;           // turn off L wheel until back on line
+   \   000058   8243DC03     MOV.W   #0x0, &0x3dc
+   \   00005C   F63F         JMP     ??follow_1
+     98                      }
+     99                       LEFT_REVERSE_SPEED  = 7000;       
+   \                     ??follow_5:
+   \   00005E   B240581BDC03 MOV.W   #0x1b58, &0x3dc
+   \   000064   DC3F         JMP     ??follow_2
+    100                 }
+    101                er_stop=RESET_VALUE;
+   \                     ??follow_3:
+   \   000066   8243....     MOV.W   #0x0, &er_stop
+    102                      
+    103          }
+   \   00006A   1001         RETA
+   \   00006C                REQUIRE _A_TB0CCR0_L
+   \   00006C                REQUIRE _A_TB0CCR3_L
+   \   00006C                REQUIRE _A_TB0CCR5_L
+    104          
+    105          
+
+   \                                 In  segment CODE, align 2
+    106          void spin2(void){
+   \                     spin2:
+    107          
+    108          wheels_off();
+   \   000000   ........     CALLA   #wheels_off
+    109            temp_right=ADC_Right_Detector;
+   \   000004   9242........ MOV.W   &ADC_Right_Detector, &temp_right
+    110            temp_left=ADC_Left_Detector;
+   \   00000A   9242........ MOV.W   &ADC_Left_Detector, &temp_left
+    111          
+    112          RIGHT_FORWARD_SPEED = 5000;
+   \   000010   B2408813DA03 MOV.W   #0x1388, &0x3da
+    113          
+    114          
+    115            while(temp_right<=gray && temp_left<=gray){
+   \                     ??spin2_0:
+   \   000016   9292........ CMP.W   &temp_right, &gray
+   \   00001C   0B28         JNC     ??spin2_1
+   \   00001E   9292........ CMP.W   &temp_left, &gray
+   \   000024   0728         JNC     ??spin2_1
+    116                temp_right=ADC_Right_Detector;
+   \   000026   9242........ MOV.W   &ADC_Right_Detector, &temp_right
+    117                temp_left=ADC_Left_Detector;
+   \   00002C   9242........ MOV.W   &ADC_Left_Detector, &temp_left
+   \   000032   F13F         JMP     ??spin2_0
+    118            }
+    119                
+    120          wheels_off();
+   \                     ??spin2_1:
+   \   000034   ........     BRA     #wheels_off
+   \   000038                REQUIRE _A_TB0CCR4_L
+    121          }
+    122          
+    123          
+
+   \                                 In  segment CODE, align 2
+    124          void electronic_brakes(void){
+   \                     electronic_brakes:
+    125            
+    126            wheels_off();
+   \   000000   ........     CALLA   #wheels_off
+    127            LEFT_REVERSE_SPEED  =  5000; 
+   \   000004   B2408813DC03 MOV.W   #0x1388, &0x3dc
+    128            RIGHT_REVERSE_SPEED = 5000;
+   \   00000A   B2408813D803 MOV.W   #0x1388, &0x3d8
+    129            wait_100ms(2);
+   \   000010   2C43         MOV.W   #0x2, R12
+   \   000012   ........     CALLA   #wait_100ms
+    130            wheels_off();
+   \   000016   ........     BRA     #wheels_off
+   \   00001A                REQUIRE _A_TB0CCR5_L
+   \   00001A                REQUIRE _A_TB0CCR3_L
+    131            
+    132          }
+    133          
+    134          
+
+   \                                 In  segment CODE, align 2
+    135          void detect_white(void){
+   \                     detect_white:
+   \                     ??detect_white_0:
+    136          
+    137            while(!white_detected){
+   \   000000   8293....     CMP.W   #0x0, &white_detected
+   \   000004   2320         JNE     ??detect_white_1
+    138                temp_right=ADC_Right_Detector;
+   \   000006   9242........ MOV.W   &ADC_Right_Detector, &temp_right
+    139                temp_left=ADC_Left_Detector;
+   \   00000C   9242........ MOV.W   &ADC_Left_Detector, &temp_left
+    140                
+    141                if(temp_right>=white && temp_left>=white){ //white detected
+   \   000012   9292........ CMP.W   &white, &temp_right
+   \   000018   F32B         JNC     ??detect_white_0
+   \   00001A   9292........ CMP.W   &white, &temp_left
+   \   000020   EF2B         JNC     ??detect_white_0
+    142                 wait_100ms(5);                           // wait half a second 
+   \   000022   3C400500     MOV.W   #0x5, R12
+   \   000026   ........     CALLA   #wait_100ms
+    143                 temp_right=ADC_Right_Detector;           // take samples
+   \   00002A   9242........ MOV.W   &ADC_Right_Detector, &temp_right
+    144                 temp_left=ADC_Left_Detector; 
+   \   000030   9242........ MOV.W   &ADC_Left_Detector, &temp_left
+    145                 if(temp_right>=white && temp_left>=white) //if still white,car is on white board
+   \   000036   9292........ CMP.W   &white, &temp_right
+   \   00003C   E12B         JNC     ??detect_white_0
+   \   00003E   9292........ CMP.W   &white, &temp_left
+   \   000044   DD2B         JNC     ??detect_white_0
+    146                  white_detected=TRUE;
+   \   000046   9243....     MOV.W   #0x1, &white_detected
+   \   00004A   DA3F         JMP     ??detect_white_0
+    147                }
+    148             }
+    149          }
+   \                     ??detect_white_1:
+   \   00004C   1001         RETA
+    150          
+    151          
+    152          
+
+   \                                 In  segment CODE, align 2
+    153          void intercept(void) {
+   \                     intercept:
+    154            // make an arc, look for black line when white board detected
+    155            
+    156            wheels_off();
+   \   000000   ........     CALLA   #wheels_off
+    157            TB0CCR0 = HI_WHEEL_PERIOD;
+   \   000004   B240204ED203 MOV.W   #0x4e20, &0x3d2
+    158            
+    159            switch(arch){
+   \   00000A   5E42....     MOV.B   &arch, R14
+   \   00000E   7E805A00     SUB.B   #0x5a, R14
+   \   000012   1D24         JEQ     ??intercept_3
+   \   000014   7E801D00     SUB.B   #0x1d, R14
+   \   000018   0524         JEQ     ??intercept_4
+   \   00001A   5E83         SUB.B   #0x1, R14
+   \   00001C   1124         JEQ     ??intercept_5
+   \   00001E   5E83         SUB.B   #0x1, R14
+   \   000020   0824         JEQ     ??intercept_6
+   \   000022   1B3C         JMP     ??intercept_2
+    160              case BIG_RIGHT:
+    161                    RIGHT_FORWARD_SPEED = 9000;
+   \                     ??intercept_4:
+   \   000024   B2402823DA03 MOV.W   #0x2328, &0x3da
+    162                    LEFT_FORWARD_SPEED =  8000;
+   \   00002A   B240401FDE03 MOV.W   #0x1f40, &0x3de
+    163                  break;
+   \   000030   143C         JMP     ??intercept_2
+    164                  
+    165              case SMALL_RIGHT:
+    166                    RIGHT_FORWARD_SPEED = 8000;
+   \                     ??intercept_6:
+   \   000032   B240401FDA03 MOV.W   #0x1f40, &0x3da
+    167                    LEFT_FORWARD_SPEED =  7500;
+   \   000038   B2404C1DDE03 MOV.W   #0x1d4c, &0x3de
+    168                  break;
+   \   00003E   0D3C         JMP     ??intercept_2
+    169                  
+    170              case BIG_LEFT:
+    171                    RIGHT_FORWARD_SPEED = 9000;
+   \                     ??intercept_5:
+   \   000040   B2402823DA03 MOV.W   #0x2328, &0x3da
+    172                    LEFT_FORWARD_SPEED =  3000;
+   \   000046   B240B80BDE03 MOV.W   #0xbb8, &0x3de
+    173                  break;
+   \   00004C   063C         JMP     ??intercept_2
+    174                  
+    175              case SMALL_LEFT:
+    176                    RIGHT_FORWARD_SPEED = 9000;
+   \                     ??intercept_3:
+   \   00004E   B2402823DA03 MOV.W   #0x2328, &0x3da
+    177                    LEFT_FORWARD_SPEED =  6000;
+   \   000054   B2407017DE03 MOV.W   #0x1770, &0x3de
+    178                  break;
+    179            default:break;
+    180            }
+    181            
+    182            P8OUT  |= IR_LED;                     //turn IR LED on
+   \                     ??intercept_2:
+   \   00005A   D2D36302     BIS.B   #0x1, &0x263
+    183            wait_100ms(5);                
+   \   00005E   3C400500     MOV.W   #0x5, R12
+   \   000062   ........     CALLA   #wait_100ms
+    184            temp_right=ADC_Right_Detector;        //take ADC samples
+   \   000066   9242........ MOV.W   &ADC_Right_Detector, &temp_right
+    185            temp_left=ADC_Left_Detector;
+   \   00006C   9242........ MOV.W   &ADC_Left_Detector, &temp_left
+    186           
+    187            while(temp_right>=white && temp_left>=white){
+   \                     ??intercept_0:
+   \   000072   9292........ CMP.W   &white, &temp_right
+   \   000078   0B28         JNC     ??intercept_1
+   \   00007A   9292........ CMP.W   &white, &temp_left
+   \   000080   0728         JNC     ??intercept_1
+    188                temp_right=ADC_Right_Detector;
+   \   000082   9242........ MOV.W   &ADC_Right_Detector, &temp_right
+    189                temp_left=ADC_Left_Detector;
+   \   000088   9242........ MOV.W   &ADC_Left_Detector, &temp_left
+   \   00008E   F13F         JMP     ??intercept_0
+    190            }
+    191          // detect_white();
+    192          // white traced, now look for black line
+    193          // travel straight
+    194             
+    195            while(temp_right<gray && temp_left<gray){   
+   \                     ??intercept_1:
+   \   000090   9292........ CMP.W   &gray, &temp_right
+   \   000096   0B2C         JC      ??intercept_7
+   \   000098   9292........ CMP.W   &gray, &temp_left
+   \   00009E   072C         JC      ??intercept_7
+    196                temp_right=ADC_Right_Detector;
+   \   0000A0   9242........ MOV.W   &ADC_Right_Detector, &temp_right
+    197                temp_left=ADC_Left_Detector;
+   \   0000A6   9242........ MOV.W   &ADC_Left_Detector, &temp_left
+   \   0000AC   F13F         JMP     ??intercept_1
+    198            }
+    199              electronic_brakes();
+   \                     ??intercept_7:
+   \   0000AE   ........     BRA     #electronic_brakes
+   \   0000B2                REQUIRE _A_TB0CCR0_L
+   \   0000B2                REQUIRE _A_TB0CCR4_L
+   \   0000B2                REQUIRE _A_TB0CCR6_L
+   \   0000B2                REQUIRE _A_PDOUT_L
+    200          }
+    201          
+
+   \                                 In  segment CODE, align 2
+    202          void intercept_and_follow(void){
+   \                     intercept_and_follow:
+    203          
+    204             switch(state){
+   \   000000   1F42....     MOV.W   &state, R15
+   \   000004   1F83         SUB.W   #0x1, R15
+   \   000006   0724         JEQ     ??intercept_and_follow_1
+   \   000008   1F83         SUB.W   #0x1, R15
+   \   00000A   1124         JEQ     ??intercept_and_follow_2
+   \   00000C   1F83         SUB.W   #0x1, R15
+   \   00000E   2324         JEQ     ??intercept_and_follow_3
+   \   000010   1F83         SUB.W   #0x1, R15
+   \   000012   3224         JEQ     ??intercept_and_follow_4
+   \   000014   1001         RETA
+    205              case STEP1:                        // Intercept black line
+    206                      menu_on=RESET_VALUE;
+   \                     ??intercept_and_follow_1:
+   \   000016   8243....     MOV.W   #0x0, &menu_on
+    207                      display_string_line(LCD_LINE1,"Intercept");
+   \   00001A   3D40....     MOV.W   #`?<Constant "Intercept">`, R13
+   \   00001E   1C43         MOV.W   #0x1, R12
+   \   000020   ........     CALLA   #display_string_line
+    208                      intercept();
+   \   000024   ........     CALLA   #intercept
+    209                      state=STEP2;
+   \   000028   A243....     MOV.W   #0x2, &state
+    210                      break;   
+   \   00002C   1001         RETA
+    211                      
+    212              case STEP2:                       // Stop at black line, turn towards line
+    213                      display_string_line(LCD_LINE1,"  Stop");
+   \                     ??intercept_and_follow_2:
+   \   00002E   3D40....     MOV.W   #`?<Constant "  Stop">`, R13
+   \   000032   1C43         MOV.W   #0x1, R12
+   \   000034   ........     CALLA   #display_string_line
+    214                      wait_100ms(THREE_COUNTS);
+   \   000038   3C400300     MOV.W   #0x3, R12
+   \   00003C   ........     CALLA   #wait_100ms
+    215                      display_string_line(LCD_LINE1,"  Turn");
+   \   000040   3D40....     MOV.W   #`?<Constant "  Turn">`, R13
+   \   000044   1C43         MOV.W   #0x1, R12
+   \   000046   ........     CALLA   #display_string_line
+    216                      spin2();
+   \   00004A   ........     CALLA   #spin2
+    217                      state=STEP3;
+   \   00004E   B2400300.... MOV.W   #0x3, &state
+    218                      break;  
+   \   000054   1001         RETA
+    219                      
+    220              case STEP3:                       // follow line
+    221                      display_string_line(LCD_LINE1,"  Follow..");
+   \                     ??intercept_and_follow_3:
+   \   000056   3D40....     MOV.W   #`?<Constant "  Follow..">`, R13
+   \   00005A   1C43         MOV.W   #0x1, R12
+   \   00005C   ........     CALLA   #display_string_line
+    222                      wait_100ms(THREE_COUNTS);
+   \   000060   3C400300     MOV.W   #0x3, R12
+   \   000064   ........     CALLA   #wait_100ms
+    223                      follow();
+   \   000068   ........     CALLA   #follow
+    224                      TB0CCR0 = WHEEL_PERIOD;  
+   \   00006C   B2401027D203 MOV.W   #0x2710, &0x3d2
+    225                      state=STEP4;
+   \   000072   A242....     MOV.W   #0x4, &state
+    226                      break;      
+   \   000076   1001         RETA
+    227                      
+    228              case STEP4:                       // Exit circle
+    229                    state=RESET_STATE;
+   \                     ??intercept_and_follow_4:
+   \   000078   8243....     MOV.W   #0x0, &state
+    230                    intercept_flag=RESET_VALUE; 
+   \   00007C   8243....     MOV.W   #0x0, &intercept_flag
+    231                    exit_circle();
+   \   000080   ........     BRA     #exit_circle
+   \   000084                REQUIRE _A_TB0CCR0_L
+    232                    break;
+    233             default:break;
+    234             }
+    235          }
+    236          
+    237          
+
+   \                                 In  segment CODE, align 2
+    238          void go_forward(int duration){  
+   \                     go_forward:
+   \   000000   0A12         PUSH.W  R10
+   \   000002   0A4C         MOV.W   R12, R10
+    239            wheels_off();
+   \   000004   ........     CALLA   #wheels_off
+    240            
+    241            //lcd_BIG_mid();
+    242            forward_moving=TRUE;
+   \   000008   9243....     MOV.W   #0x1, &forward_moving
+    243            display_string_line(LCD_LINE1,"  Forward");
+   \   00000C   3D40....     MOV.W   #`?<Constant "  Forward">`, R13
+   \   000010   1C43         MOV.W   #0x1, R12
+   \   000012   ........     CALLA   #display_string_line
+    244            
+    245            RIGHT_FORWARD_SPEED = 9000;
+   \   000016   B2402823DA03 MOV.W   #0x2328, &0x3da
+    246            LEFT_FORWARD_SPEED =  6600;
+   \   00001C   B240C819DE03 MOV.W   #0x19c8, &0x3de
+    247          
+    248            wait_100ms(duration);
+   \   000022   0C4A         MOV.W   R10, R12
+   \   000024   ........     CALLA   #wait_100ms
+    249            clear_display_line(LCD_LINE1);
+   \   000028   1C43         MOV.W   #0x1, R12
+   \   00002A   ........     CALLA   #clear_display_line
+    250            forward_moving=RESET_VALUE;
+   \   00002E   8243....     MOV.W   #0x0, &forward_moving
+    251            wheels_off();
+   \   000032   ........     CALLA   #wheels_off
+    252            //lcd_4line();
+    253          }
+   \   000036   3A41         POP.W   R10
+   \   000038   1001         RETA
+   \   00003A                REQUIRE _A_TB0CCR4_L
+   \   00003A                REQUIRE _A_TB0CCR6_L
+    254          
+
+   \                                 In  segment CODE, align 2
+    255          void go_reverse(int duration){   
+   \                     go_reverse:
+   \   000000   0A12         PUSH.W  R10
+   \   000002   0A4C         MOV.W   R12, R10
+    256            wheels_off();
+   \   000004   ........     CALLA   #wheels_off
+    257            reverse_moving=TRUE;
+   \   000008   9243....     MOV.W   #0x1, &reverse_moving
+    258            display_string_line(LCD_LINE1,"  Reverse");
+   \   00000C   3D40....     MOV.W   #`?<Constant "  Reverse">`, R13
+   \   000010   1C43         MOV.W   #0x1, R12
+   \   000012   ........     CALLA   #display_string_line
+    259            //lcd_BIG_mid();
+    260            
+    261            RIGHT_REVERSE_SPEED = 9000;
+   \   000016   B2402823D803 MOV.W   #0x2328, &0x3d8
+    262            LEFT_REVERSE_SPEED =  6600;
+   \   00001C   B240C819DC03 MOV.W   #0x19c8, &0x3dc
+    263          
+    264            wait_100ms(duration);
+   \   000022   0C4A         MOV.W   R10, R12
+   \   000024   ........     CALLA   #wait_100ms
+    265            clear_display_line(LCD_LINE1);
+   \   000028   1C43         MOV.W   #0x1, R12
+   \   00002A   ........     CALLA   #clear_display_line
+    266            reverse_moving=RESET_VALUE;
+   \   00002E   8243....     MOV.W   #0x0, &reverse_moving
+    267            wheels_off();
+   \   000032   ........     CALLA   #wheels_off
+    268            //lcd_4line();
+    269          }
+   \   000036   3A41         POP.W   R10
+   \   000038   1001         RETA
+   \   00003A                REQUIRE _A_TB0CCR3_L
+   \   00003A                REQUIRE _A_TB0CCR5_L
+    270          
+
+   \                                 In  segment CODE, align 2
+    271          void turn_right(int duration){  
+   \                     turn_right:
+   \   000000   0A12         PUSH.W  R10
+   \   000002   0A4C         MOV.W   R12, R10
+    272            wheels_off();
+   \   000004   ........     CALLA   #wheels_off
+    273            //lcd_BIG_mid();
+    274            display_string_line(LCD_LINE1,"  Right");
+   \   000008   3D40....     MOV.W   #`?<Constant "  Right">`, R13
+   \   00000C   1C43         MOV.W   #0x1, R12
+   \   00000E   ........     CALLA   #display_string_line
+    275            
+    276            
+    277            LEFT_FORWARD_SPEED =  LFSPEED;
+   \   000012   B2407017DE03 MOV.W   #0x1770, &0x3de
+    278          
+    279            wait_100ms(duration);
+   \   000018   0C4A         MOV.W   R10, R12
+   \   00001A   ........     CALLA   #wait_100ms
+    280            clear_display_line(LCD_LINE1);
+   \   00001E   1C43         MOV.W   #0x1, R12
+   \   000020   ........     CALLA   #clear_display_line
+    281            wheels_off();
+   \   000024   ........     CALLA   #wheels_off
+    282            //lcd_4line();
+    283          }
+   \   000028   3A41         POP.W   R10
+   \   00002A   1001         RETA
+   \   00002C                REQUIRE _A_TB0CCR6_L
+    284          
+
+   \                                 In  segment CODE, align 2
+    285          void turn_left(int duration){  
+   \                     turn_left:
+   \   000000   0A12         PUSH.W  R10
+   \   000002   0A4C         MOV.W   R12, R10
+    286            wheels_off();
+   \   000004   ........     CALLA   #wheels_off
+    287            //lcd_BIG_mid();
+    288            display_string_line(LCD_LINE1,"  Left");
+   \   000008   3D40....     MOV.W   #`?<Constant "  Left">`, R13
+   \   00000C   1C43         MOV.W   #0x1, R12
+   \   00000E   ........     CALLA   #display_string_line
+    289                                
+    290            RIGHT_FORWARD_SPEED = RFSPEED;
+   \   000012   B240401FDA03 MOV.W   #0x1f40, &0x3da
+    291           // LEFT_FORWARD_SPEED =  LFSPEED;
+    292          
+    293            wait_100ms(duration);
+   \   000018   0C4A         MOV.W   R10, R12
+   \   00001A   ........     CALLA   #wait_100ms
+    294            clear_display_line(LCD_LINE1);
+   \   00001E   1C43         MOV.W   #0x1, R12
+   \   000020   ........     CALLA   #clear_display_line
+    295            wheels_off();
+   \   000024   ........     CALLA   #wheels_off
+    296            //lcd_4line();
+    297          }
+   \   000028   3A41         POP.W   R10
+   \   00002A   1001         RETA
+   \   00002C                REQUIRE _A_TB0CCR4_L
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "  DONE!!">`:
+   \   000000   2020444F4E45 DC8 "  DONE!!"
+   \            212100      
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "Intercept">`:
+   \   000000   496E74657263 DC8 "Intercept"
+   \            65707400    
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "  Stop">`:
+   \   000000   202053746F70 DC8 "  Stop"
+   \            00          
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "  Turn">`:
+   \   000000   20205475726E DC8 "  Turn"
+   \            00          
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "  Follow..">`:
+   \   000000   2020466F6C6C DC8 "  Follow.."
+   \            6F772E2E00  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "  Forward">`:
+   \   000000   2020466F7277 DC8 "  Forward"
+   \            61726400    
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "  Reverse">`:
+   \   000000   202052657665 DC8 "  Reverse"
+   \            72736500    
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "  Right">`:
+   \   000000   202052696768 DC8 "  Right"
+   \            7400        
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "  Left">`:
+   \   000000   20204C656674 DC8 "  Left"
+   \            00          
+    298          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   detect_white
+        4   -> wait_100ms
+      4   electronic_brakes
+        4   -> wait_100ms
+        0   -> wheels_off
+        4   -> wheels_off
+      4   exit_circle
+        0   -> display_string_line
+        4   -> go_forward
+        4   -> wheels_off
+      4   follow
+      6   go_forward
+        6   -> clear_display_line
+        6   -> display_string_line
+        6   -> wait_100ms
+        6   -> wheels_off
+      6   go_reverse
+        6   -> clear_display_line
+        6   -> display_string_line
+        6   -> wait_100ms
+        6   -> wheels_off
+      4   intercept
+        0   -> electronic_brakes
+        4   -> wait_100ms
+        4   -> wheels_off
+      4   intercept_and_follow
+        4   -> display_string_line
+        0   -> exit_circle
+        4   -> follow
+        4   -> intercept
+        4   -> spin2
+        4   -> wait_100ms
+      4   spin2
+        0   -> wheels_off
+        4   -> wheels_off
+      6   turn_left
+        6   -> clear_display_line
+        6   -> display_string_line
+        6   -> wait_100ms
+        6   -> wheels_off
+      6   turn_right
+        6   -> clear_display_line
+        6   -> display_string_line
+        6   -> wait_100ms
+        6   -> wheels_off
+      4   wheels_off
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       9  ?<Constant "  DONE!!">
+      11  ?<Constant "  Follow..">
+      10  ?<Constant "  Forward">
+       7  ?<Constant "  Left">
+      10  ?<Constant "  Reverse">
+       8  ?<Constant "  Right">
+       7  ?<Constant "  Stop">
+       7  ?<Constant "  Turn">
+      10  ?<Constant "Intercept">
+       2  _A_PDOUT_L
+       2  _A_TB0CCR0_L
+       2  _A_TB0CCR3_L
+       2  _A_TB0CCR4_L
+       2  _A_TB0CCR5_L
+       2  _A_TB0CCR6_L
+       2  current_time
+       2  dark_gray
+      78  detect_white
+      26  electronic_brakes
+      32  exit_circle
+       2  first_state_done
+     108  follow
+       2  forward_moving
+      58  go_forward
+      58  go_reverse
+     178  intercept
+     132  intercept_and_follow
+       2  reverse_moving
+      56  spin2
+       2  time_to_travel
+      44  turn_left
+      44  turn_right
+      18  wheels_off
+       2  white_detected
+
+ 
+ 832 bytes in segment CODE
+  12 bytes in segment DATA16_AN
+  79 bytes in segment DATA16_C
+  14 bytes in segment DATA16_Z
+ 
+ 832 bytes of CODE  memory
+  79 bytes of CONST memory
+  14 bytes of DATA  memory (+ 12 bytes shared)
+
+Errors: none
+Warnings: none

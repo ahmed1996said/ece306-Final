@@ -1,0 +1,570 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.1.987/W32 for MSP430           04/Dec/2018  11:06:28
+# Copyright 1996-2018 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Interrupt_serial.c
+#    Command line  =  
+#        -f C:\Users\Ahmed\AppData\Local\Temp\EW6B84.tmp
+#        ("C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Interrupt_serial.c" -lC "C:\Users\Ahmed\Desktop\Project 10- New
+#        Approach\Project 10\Debug\List" -o "C:\Users\Ahmed\Desktop\Project 10-
+#        New Approach\Project 10\Debug\Obj" --no_cse --no_unroll --no_inline
+#        --no_code_motion --no_tbaa --debug -D__MSP430FR5994__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.0\430\lib\dlib\dl430xlsfn.h" --core=430X --data_model=small -On
+#        --multiplier=32 --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List\Interrupt_serial.lst
+#    Object file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\Obj\Interrupt_serial.r43
+#
+###############################################################################
+
+C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\Interrupt_serial.c
+      1          #include  "msp430.h"
+
+   \                                 In  segment DATA16_AN, at 0x5cc
+   \   union <unnamed> _A_UCA0RXBUF_L
+   \                     _A_UCA0RXBUF_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x5ce
+   \   union <unnamed> _A_UCA0TXBUF_L
+   \                     _A_UCA0TXBUF_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x5dc
+   \   union <unnamed> _A_UCA0IFG_L
+   \                     _A_UCA0IFG_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x5de
+   \   union <unnamed> _A_UCA0IV_L
+   \                     _A_UCA0IV_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x62c
+   \   union <unnamed> _A_UCA3RXBUF_L
+   \                     _A_UCA3RXBUF_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x62e
+   \   union <unnamed> _A_UCA3TXBUF_L
+   \                     _A_UCA3TXBUF_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x63c
+   \   union <unnamed> _A_UCA3IFG_L
+   \                     _A_UCA3IFG_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x63e
+   \   union <unnamed> _A_UCA3IV_L
+   \                     _A_UCA3IV_L:
+   \   000000                DS8 2
+      2          #include  "functions.h"
+      3          #include  <string.h>
+      4          #include  "macros.h" 
+      5          
+      6          extern volatile unsigned int A0_rx_ring_wr;
+      7          extern volatile unsigned int A3_rx_ring_wr;
+      8          
+      9          extern volatile unsigned int A0_rx_ring_rd;
+     10          extern volatile unsigned int A3_rx_ring_rd;
+     11          
+     12          extern volatile char A0_Char_Rx[SMALL_RING_SIZE];
+     13          extern volatile char A3_Char_Rx[SMALL_RING_SIZE];
+     14          extern unsigned volatile int UCA3_index;
+     15          extern char test_command[SMALL_RING_SIZE];
+     16          extern char recieved[SMALL_RING_SIZE];
+     17          extern volatile unsigned int transmit_done;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     18          unsigned int recieved_flag_A0=RESET_VALUE;
+   \                     recieved_flag_A0:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     19          unsigned int recieved_flag_A3=RESET_VALUE;
+   \                     recieved_flag_A3:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     20          unsigned char rx_temp_A0;
+   \                     rx_temp_A0:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     21          unsigned char rx_temp_A3;
+   \                     rx_temp_A3:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     22          unsigned int A0_recieve_complete;
+   \                     A0_recieve_complete:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     23          unsigned volatile int command_recieved=RESET_VALUE;
+   \                     command_recieved:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     24          unsigned volatile int command_recieved3=RESET_VALUE;
+   \                     command_recieved3:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     25          char temp;
+   \                     temp:
+   \   000000                DS8 1
+     26          extern volatile unsigned int command_complete;
+     27          extern unsigned volatile int command_complete_A3;
+     28          extern unsigned volatile int command_recieved_A3;
+     29          extern unsigned int temp_index;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     30          unsigned int index_a3;
+   \                     index_a3:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     31          unsigned int temp_index3;
+   \                     temp_index3:
+   \   000000                DS8 2
+     32          extern char process_buffer[SMALL_RING_SIZE];
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     33          char process_buffer3[SMALL_RING_SIZE];
+   \                     process_buffer3:
+   \   000000                DS8 16
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     34          char command_buffer3[CMD_BUFFER_SIZE];
+   \                     command_buffer3:
+   \   000000                DS8 38
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     35          volatile unsigned int command_index;
+   \                     command_index:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     36          char temp_A3;
+   \                     temp_A3:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     37          volatile unsigned int i_recieved;
+   \                     i_recieved:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     38          volatile unsigned int ip_length;
+   \                     ip_length:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     39          volatile unsigned int ip_recieved;
+   \                     ip_recieved:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     40          volatile unsigned int p=RESET_VALUE;
+   \                     p:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_I, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_copy
+     41          unsigned int find_ip=TRUE;
+   \                     find_ip:
+   \   000000                DS8 2
+   \   000002                REQUIRE `?<Initializer for find_ip>`
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     42          char ip_address[SMALL_RING_SIZE];
+   \                     ip_address:
+   \   000000                DS8 16
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     43          unsigned int ip_found;
+   \                     ip_found:
+   \   000000                DS8 2
+     44          extern volatile unsigned int cmd_cnt;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     45          unsigned int caret_index[CARET_BUFFER];
+   \                     caret_index:
+   \   000000                DS8 10
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     46          unsigned int copy_ip;
+   \                     copy_ip:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     47          volatile unsigned int er_stop;
+   \                     er_stop:
+   \   000000                DS8 2
+     48          
+     49          
+     50          
+     51          //------------------------------------------------------------------------------
+     52          
+     53          #pragma vector=EUSCI_A0_VECTOR
+
+   \                                 In  segment ISR_CODE, align 2
+     54          __interrupt void eUSCI_A0_ISR(void){
+   \                     eUSCI_A0_ISR:
+   \   000000   1F15         PUSHM.W #0x2, R15
+     55            
+     56              switch(__even_in_range(UCA0IV,END_OF_SERIAL_RANGE)){
+   \   000002   1F42DE05     MOV.W   &0x5de, R15
+   \   000006   E00F         ADDA    R15, PC
+   \                     `?<Jumptable for eUSCI_A0_ISR>_0`:
+   \   000008   2F3C         JMP     ??eUSCI_A0_ISR_4
+   \   00000A   033C         JMP     ??eUSCI_A0_ISR_5
+   \   00000C   2D3C         JMP     ??eUSCI_A0_ISR_4
+   \   00000E   2C3C         JMP     ??eUSCI_A0_ISR_4
+   \   000010   2B3C         JMP     ??eUSCI_A0_ISR_4
+     57                
+     58                 case NO_INTERRUPT: // Vector 0 - no interrupt
+     59                   break;
+     60                    
+     61                 case RX: // Vector 2 - RXIFG
+     62                      
+     63                   temp = UCA0RXBUF;                       // RX -> A0_Char_Rx character
+   \                     ??eUSCI_A0_ISR_5:
+   \   000012   1E42CC05     MOV.W   &0x5cc, R14
+   \   000016   C24E....     MOV.B   R14, &temp
+     64                   
+     65                   
+     66                   if(temp == CARET)                           // if CARET, we got a command
+   \   00001A   F2905E00.... CMP.B   #0x5e, &temp
+   \   000020   0220         JNE     ??eUSCI_A0_ISR_3
+     67                      command_recieved=TRUE; 
+   \   000022   9243....     MOV.W   #0x1, &command_recieved
+     68                       
+     69                   if(command_recieved){
+   \                     ??eUSCI_A0_ISR_3:
+   \   000026   8293....     CMP.W   #0x0, &command_recieved
+   \   00002A   1024         JEQ     ??eUSCI_A0_ISR_0
+     70                      process_buffer[temp_index++]=temp;             //if command, save to process buffer, deal with in main
+   \   00002C   1F42....     MOV.W   &temp_index, R15
+   \   000030   DF42........ MOV.B   &temp, process_buffer(R15)
+   \   000036   9253....     ADD.W   #0x1, &temp_index
+     71                      if(temp == LF){
+   \   00003A   F2900A00.... CMP.B   #0xa, &temp
+   \   000040   0D20         JNE     ??eUSCI_A0_ISR_2
+     72                        command_recieved=RESET_VALUE;
+   \   000042   8243....     MOV.W   #0x0, &command_recieved
+     73                        command_complete=TRUE;                     // command recieve complete, deal with in main
+   \   000046   9243....     MOV.W   #0x1, &command_complete
+   \   00004A   083C         JMP     ??eUSCI_A0_ISR_2
+     74                        }
+     75                   }else{            
+     76                      while (!(UCA3IFG & UCTXIFG));                               // USCI_A3 TX buffer ready?
+   \                     ??eUSCI_A0_ISR_0:
+   \   00004C   A2B33C06     BIT.W   #0x2, &0x63c
+   \   000050   FD2B         JNC     ??eUSCI_A0_ISR_0
+     77                      UCA3TXBUF=temp;                     //if not command, send out to UCA3
+   \   000052   5F42....     MOV.B   &temp, R15
+   \   000056   4F4F         MOV.B   R15, R15
+   \   000058   824F2E06     MOV.W   R15, &0x62e
+     78                   }
+     79                  
+     80                 if(temp_index >= (SMALL_RING_SIZE))
+   \                     ??eUSCI_A0_ISR_2:
+   \   00005C   B2901000.... CMP.W   #0x10, &temp_index
+   \   000062   0228         JNC     ??eUSCI_A0_ISR_4
+     81                   temp_index = BEGINNING;            // Circular buffer back to beginning
+   \   000064   8243....     MOV.W   #0x0, &temp_index
+     82                         
+     83                      break;
+     84                      
+     85                    default: break;
+     86             }
+     87          }
+   \                     ??eUSCI_A0_ISR_4:
+   \   000068   1E17         POPM.W  #0x2, R15
+   \   00006A   0013         RETI
+   \   00006C                REQUIRE _A_UCA0RXBUF_L
+   \   00006C                REQUIRE _A_UCA3IFG_L
+   \   00006C                REQUIRE _A_UCA3TXBUF_L
+   \   00006C                REQUIRE _A_UCA0IV_L
+     88          //------------------------------------------------------------------------------
+     89          
+     90          
+     91          
+     92          //------------------------------------------------------------------------------
+     93          #pragma vector=EUSCI_A3_VECTOR
+
+   \                                 In  segment ISR_CODE, align 2
+     94          __interrupt void eUSCI_A3_ISR(void){
+   \                     eUSCI_A3_ISR:
+   \   000000   1F15         PUSHM.W #0x2, R15
+     95            
+     96          
+     97          switch(__even_in_range(UCA3IV,END_OF_SERIAL_RANGE)){
+   \   000002   1F423E06     MOV.W   &0x63e, R15
+   \   000006   E00F         ADDA    R15, PC
+   \                     `?<Jumptable for eUSCI_A3_ISR>_0`:
+   \   000008   703C         JMP     ??eUSCI_A3_ISR_8
+   \   00000A   033C         JMP     ??eUSCI_A3_ISR_9
+   \   00000C   6E3C         JMP     ??eUSCI_A3_ISR_8
+   \   00000E   6D3C         JMP     ??eUSCI_A3_ISR_8
+   \   000010   6C3C         JMP     ??eUSCI_A3_ISR_8
+     98           
+     99           case NO_INTERRUPT: // Vector 0 - no interrupt
+    100                  break;
+    101                    
+    102           case RX: // Vector 2 - RXIFG   
+    103          
+    104             
+    105              temp_A3 = UCA3RXBUF;
+   \                     ??eUSCI_A3_ISR_9:
+   \   000012   1E422C06     MOV.W   &0x62c, R14
+   \   000016   C24E....     MOV.B   R14, &temp_A3
+    106              process_buffer3[temp_index3]=temp_A3; 
+   \   00001A   1F42....     MOV.W   &temp_index3, R15
+   \   00001E   DF42........ MOV.B   &temp_A3, process_buffer3(R15)
+    107              
+    108              if(temp_A3==STOP_SIGNAL)
+   \   000024   F2902400.... CMP.B   #0x24, &temp_A3
+   \   00002A   0220         JNE     ??eUSCI_A3_ISR_2
+    109                er_stop=TRUE;
+   \   00002C   9243....     MOV.W   #0x1, &er_stop
+    110           
+    111              // find IP on start up         
+    112               if(find_ip) {  
+   \                     ??eUSCI_A3_ISR_2:
+   \   000030   8293....     CMP.W   #0x0, &find_ip
+   \   000034   2024         JEQ     ??eUSCI_A3_ISR_3
+    113                   if(temp_A3== '1'){            
+   \   000036   F2903100.... CMP.B   #0x31, &temp_A3
+   \   00003C   0220         JNE     ??eUSCI_A3_ISR_4
+    114                      ip_recieved=TRUE;
+   \   00003E   9243....     MOV.W   #0x1, &ip_recieved
+    115                    }
+    116                   if(ip_recieved)
+   \                     ??eUSCI_A3_ISR_4:
+   \   000042   8293....     CMP.W   #0x0, &ip_recieved
+   \   000046   1724         JEQ     ??eUSCI_A3_ISR_3
+    117                   {
+    118                    ip_address[p]=temp_A3; 
+   \   000048   1F42....     MOV.W   &p, R15
+   \   00004C   DF42........ MOV.B   &temp_A3, ip_address(R15)
+    119                    p++;
+   \   000052   9253....     ADD.W   #0x1, &p
+    120                    ip_length++;
+   \   000056   9253....     ADD.W   #0x1, &ip_length
+    121                    if(ip_length>=IP_LENGTH){
+   \   00005A   B2900D00.... CMP.W   #0xd, &ip_length
+   \   000060   0A28         JNC     ??eUSCI_A3_ISR_3
+    122                      ip_recieved=RESET_VALUE;
+   \   000062   8243....     MOV.W   #0x0, &ip_recieved
+    123                      ip_length=RESET_VALUE;
+   \   000066   8243....     MOV.W   #0x0, &ip_length
+    124                      find_ip=RESET_VALUE;
+   \   00006A   8243....     MOV.W   #0x0, &find_ip
+    125                      ip_recieved=RESET_VALUE;
+   \   00006E   8243....     MOV.W   #0x0, &ip_recieved
+    126                      ip_found = TRUE;
+   \   000072   9243....     MOV.W   #0x1, &ip_found
+    127                    }
+    128                   }
+    129                 }          
+    130              //--------------- 
+    131               
+    132              //check if command recieved from IoT 
+    133                if(temp_A3 == CARET){                         // if CARET, we got a command
+   \                     ??eUSCI_A3_ISR_3:
+   \   000076   F2905E00.... CMP.B   #0x5e, &temp_A3
+   \   00007C   0A20         JNE     ??eUSCI_A3_ISR_5
+    134                      command_recieved_A3=TRUE;
+   \   00007E   9243....     MOV.W   #0x1, &command_recieved_A3
+    135                      caret_index[cmd_cnt] = index_a3;       // save indexes of commands in an int array
+   \   000082   1F42....     MOV.W   &cmd_cnt, R15
+   \   000086   0F5F         RLA.W   R15
+   \   000088   9F42........ MOV.W   &index_a3, caret_index(R15)
+    136                      cmd_cnt++;
+   \   00008E   9253....     ADD.W   #0x1, &cmd_cnt
+    137                }
+    138          
+    139                       
+    140                   if(command_recieved_A3){
+   \                     ??eUSCI_A3_ISR_5:
+   \   000092   8293....     CMP.W   #0x0, &command_recieved_A3
+   \   000096   1124         JEQ     ??eUSCI_A3_ISR_0
+    141                      command_buffer3[index_a3]=temp_A3;     //if command, save to command buffer
+   \   000098   1F42....     MOV.W   &index_a3, R15
+   \   00009C   DF42........ MOV.B   &temp_A3, command_buffer3(R15)
+    142                      if(temp_A3 == LF|| temp==0x20){
+   \   0000A2   F2900A00.... CMP.B   #0xa, &temp_A3
+   \   0000A8   0424         JEQ     ??eUSCI_A3_ISR_6
+   \   0000AA   F2902000.... CMP.B   #0x20, &temp
+   \   0000B0   0420         JNE     ??eUSCI_A3_ISR_0
+    143                        command_recieved_A3=RESET_VALUE;
+   \                     ??eUSCI_A3_ISR_6:
+   \   0000B2   8243....     MOV.W   #0x0, &command_recieved_A3
+    144                        command_complete_A3=TRUE;              // command recieve complete, deal with in main
+   \   0000B6   9243....     MOV.W   #0x1, &command_complete_A3
+    145                        }
+    146                   }
+    147                      
+    148              //-------------     
+    149                
+    150                   
+    151                   while (!(UCA0IFG & UCTXIFG)); // USCI_A3 TX buffer ready?
+   \                     ??eUSCI_A3_ISR_0:
+   \   0000BA   A2B3DC05     BIT.W   #0x2, &0x5dc
+   \   0000BE   FD2B         JNC     ??eUSCI_A3_ISR_0
+    152                   UCA0TXBUF = temp_A3;
+   \   0000C0   5F42....     MOV.B   &temp_A3, R15
+   \   0000C4   4F4F         MOV.B   R15, R15
+   \   0000C6   824FCE05     MOV.W   R15, &0x5ce
+    153                   
+    154                    if(++temp_index3 >= (SMALL_RING_SIZE))
+   \   0000CA   9253....     ADD.W   #0x1, &temp_index3
+   \   0000CE   B2901000.... CMP.W   #0x10, &temp_index3
+   \   0000D4   0228         JNC     ??eUSCI_A3_ISR_7
+    155                      temp_index3 = BEGINNING;            // Circular buffer back to beginning
+   \   0000D6   8243....     MOV.W   #0x0, &temp_index3
+    156                            
+    157                    if(++index_a3 >= (CMD_BUFFER_SIZE))
+   \                     ??eUSCI_A3_ISR_7:
+   \   0000DA   9253....     ADD.W   #0x1, &index_a3
+   \   0000DE   B2902600.... CMP.W   #0x26, &index_a3
+   \   0000E4   0228         JNC     ??eUSCI_A3_ISR_8
+    158                      index_a3 = BEGINNING;            // Circular buffer back to beginning
+   \   0000E6   8243....     MOV.W   #0x0, &index_a3
+    159                    
+    160                    
+    161                  break;
+    162           
+    163                  default:break;
+    164           }
+    165          }
+   \                     ??eUSCI_A3_ISR_8:
+   \   0000EA   1E17         POPM.W  #0x2, R15
+   \   0000EC   0013         RETI
+   \   0000EE                REQUIRE _A_UCA3RXBUF_L
+   \   0000EE                REQUIRE _A_UCA0IFG_L
+   \   0000EE                REQUIRE _A_UCA0TXBUF_L
+   \   0000EE                REQUIRE _A_UCA3IV_L
+
+   \                                 In  segment INTVEC, offset 0x30, root
+   \                     `??eUSCI_A3_ISR::??INTVEC 48`:
+   \   000030   ....         DC16    eUSCI_A3_ISR
+
+   \                                 In  segment INTVEC, offset 0x60, root
+   \                     `??eUSCI_A0_ISR::??INTVEC 96`:
+   \   000060   ....         DC16    eUSCI_A0_ISR
+
+   \                                 In  segment DATA16_ID, align 2, align-sorted
+   \                     `?<Initializer for find_ip>`:
+   \   000000   0100         DC16 1
+    166          //------------------------------------------------------------------------------
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      8   eUSCI_A0_ISR
+      8   eUSCI_A3_ISR
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  ?<Initializer for find_ip>
+       2  A0_recieve_complete
+       2  _A_UCA0IFG_L
+       2  _A_UCA0IV_L
+       2  _A_UCA0RXBUF_L
+       2  _A_UCA0TXBUF_L
+       2  _A_UCA3IFG_L
+       2  _A_UCA3IV_L
+       2  _A_UCA3RXBUF_L
+       2  _A_UCA3TXBUF_L
+      10  caret_index
+      38  command_buffer3
+       2  command_index
+       2  command_recieved
+       2  command_recieved3
+       2  copy_ip
+     108  eUSCI_A0_ISR
+       2  eUSCI_A0_ISR::??INTVEC 96
+     238  eUSCI_A3_ISR
+       2  eUSCI_A3_ISR::??INTVEC 48
+       2  er_stop
+       2  find_ip
+       2  i_recieved
+       2  index_a3
+      16  ip_address
+       2  ip_found
+       2  ip_length
+       2  ip_recieved
+       2  p
+      16  process_buffer3
+       2  recieved_flag_A0
+       2  recieved_flag_A3
+       1  rx_temp_A0
+       1  rx_temp_A3
+       1  temp
+       1  temp_A3
+       2  temp_index3
+
+ 
+  16 bytes in segment DATA16_AN
+   2 bytes in segment DATA16_I
+   2 bytes in segment DATA16_ID
+ 114 bytes in segment DATA16_Z
+   4 bytes in segment INTVEC
+ 346 bytes in segment ISR_CODE
+ 
+ 346 bytes of CODE  memory
+   2 bytes of CONST memory (+  4 bytes shared)
+ 116 bytes of DATA  memory (+ 16 bytes shared)
+
+Errors: none
+Warnings: none

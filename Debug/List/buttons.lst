@@ -1,0 +1,199 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.1.987/W32 for MSP430           04/Dec/2018  11:06:27
+# Copyright 1996-2018 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\buttons.c
+#    Command line  =  
+#        -f C:\Users\Ahmed\AppData\Local\Temp\EW6767.tmp
+#        ("C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\buttons.c" -lC "C:\Users\Ahmed\Desktop\Project 10- New
+#        Approach\Project 10\Debug\List" -o "C:\Users\Ahmed\Desktop\Project 10-
+#        New Approach\Project 10\Debug\Obj" --no_cse --no_unroll --no_inline
+#        --no_code_motion --no_tbaa --debug -D__MSP430FR5994__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.0\430\lib\dlib\dl430xlsfn.h" --core=430X --data_model=small -On
+#        --multiplier=32 --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List\buttons.lst
+#    Object file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\Obj\buttons.r43
+#
+###############################################################################
+
+C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\buttons.c
+      1          #include  "msp430.h"
+
+   \                                 In  segment DATA16_AN, at 0x25a
+   \   union <unnamed> _A_PCIE_L
+   \                     _A_PCIE_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x25c
+   \   union <unnamed> _A_PCIFG_L
+   \                     _A_PCIFG_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x344
+   \   union <unnamed> _A_TA0CCTL1_L
+   \                     _A_TA0CCTL1_L:
+   \   000000                DS8 2
+      2          #include  "functions.h"
+      3          #include  <string.h>
+      4          #include  "macros.h"
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+      5          volatile unsigned int b1 = RESET_STATE;
+   \                     b1:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+      6          volatile unsigned int debounce1 = RESET_STATE;
+   \                     debounce1:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+      7          volatile unsigned int debounce1_count = RESET_STATE;
+   \                     debounce1_count:
+   \   000000                DS8 2
+      8          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+      9          volatile unsigned int b2 = RESET_STATE;
+   \                     b2:
+   \   000000                DS8 2
+     10          extern volatile unsigned int b2_count;
+     11          extern volatile unsigned int b1_count;
+     12          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     13          volatile unsigned int debounce2 = RESET_STATE;
+   \                     debounce2:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     14          volatile unsigned int debounce2_count = RESET_STATE;
+   \                     debounce2_count:
+   \   000000                DS8 2
+     15          
+     16          
+     17          
+     18          #pragma vector=PORT5_VECTOR
+
+   \                                 In  segment ISR_CODE, align 2
+     19          __interrupt void BUTTON_interrupt(void) {
+   \                     BUTTON_interrupt:
+     20          
+     21          // BUTTON 1
+     22            if (P5IFG & BUTTON1) { 
+   \   000000   F2B040005C02 BIT.B   #0x40, &0x25c
+   \   000006   0F28         JNC     ??BUTTON_interrupt_0
+     23                
+     24               b1 = TRUE;                // BUTTON1 is pressed
+   \   000008   9243....     MOV.W   #0x1, &b1
+     25               
+     26               debounce1 = TRUE;         // BUTTON1 is being debounced
+   \   00000C   9243....     MOV.W   #0x1, &debounce1
+     27               debounce1_count = RESET_STATE;
+   \   000010   8243....     MOV.W   #0x0, &debounce1_count
+     28               P5IE  &= ~BUTTON1;
+   \   000014   F2C040005A02 BIC.B   #0x40, &0x25a
+     29               TA0CCTL1 |= CCIE;         // enable timer interrupt CCR1 
+   \   00001A   B2D010004403 BIS.W   #0x10, &0x344
+     30          
+     31               P5IFG &= ~BUTTON1;        // disable switch interrupt
+   \   000020   F2C040005C02 BIC.B   #0x40, &0x25c
+     32               
+     33          }
+     34          
+     35          
+     36          // BUTTON 2
+     37          if (P5IFG & BUTTON2) {
+   \                     ??BUTTON_interrupt_0:
+   \   000026   F2B020005C02 BIT.B   #0x20, &0x25c
+   \   00002C   0F28         JNC     ??BUTTON_interrupt_1
+     38            
+     39               b2 = TRUE;         // BUTTON2 is pressed
+   \   00002E   9243....     MOV.W   #0x1, &b2
+     40                       
+     41               debounce2 = TRUE;         // BUTTON2 is being debounced
+   \   000032   9243....     MOV.W   #0x1, &debounce2
+     42               debounce2_count = RESET_STATE;
+   \   000036   8243....     MOV.W   #0x0, &debounce2_count
+     43               P5IE  &= ~BUTTON2;
+   \   00003A   F2C020005A02 BIC.B   #0x20, &0x25a
+     44               TA0CCTL1 |= CCIE;         // enable timer interrupt CCR1                     
+   \   000040   B2D010004403 BIS.W   #0x10, &0x344
+     45               P5IFG &= ~BUTTON2;        // disable switch interrupt
+   \   000046   F2C020005C02 BIC.B   #0x20, &0x25c
+     46            
+     47          
+     48          }
+     49          // Enable the Timer Interrupt for the debounce.
+     50          //------------------------------------------------------------------------------
+     51          }
+   \                     ??BUTTON_interrupt_1:
+   \   00004C   0013         RETI
+   \   00004E                REQUIRE _A_PCIFG_L
+   \   00004E                REQUIRE _A_PCIE_L
+   \   00004E                REQUIRE _A_TA0CCTL1_L
+
+   \                                 In  segment INTVEC, offset 0x36, root
+   \                     `??BUTTON_interrupt::??INTVEC 54`:
+   \   000036   ....         DC16    BUTTON_interrupt
+     52          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   BUTTON_interrupt
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      78  BUTTON_interrupt
+       2  BUTTON_interrupt::??INTVEC 54
+       2  _A_PCIE_L
+       2  _A_PCIFG_L
+       2  _A_TA0CCTL1_L
+       2  b1
+       2  b2
+       2  debounce1
+       2  debounce1_count
+       2  debounce2
+       2  debounce2_count
+
+ 
+  6 bytes in segment DATA16_AN
+ 12 bytes in segment DATA16_Z
+  2 bytes in segment INTVEC
+ 78 bytes in segment ISR_CODE
+ 
+ 78 bytes of CODE  memory
+  0 bytes of CONST memory (+ 2 bytes shared)
+ 12 bytes of DATA  memory (+ 6 bytes shared)
+
+Errors: none
+Warnings: none

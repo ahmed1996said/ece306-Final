@@ -1,0 +1,220 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.12.1.987/W32 for MSP430           04/Dec/2018  11:06:29
+# Copyright 1996-2018 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for Texas Instruments MSP430, 8K KickStart Edition 7.12
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\menu.c
+#    Command line  =  
+#        -f C:\Users\Ahmed\AppData\Local\Temp\EW6DAC.tmp
+#        ("C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\menu.c"
+#        -lC "C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List" -o "C:\Users\Ahmed\Desktop\Project 10- New
+#        Approach\Project 10\Debug\Obj" --no_cse --no_unroll --no_inline
+#        --no_code_motion --no_tbaa --debug -D__MSP430FR5994__ -e --double=32
+#        --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.0\430\lib\dlib\dl430xlsfn.h" --core=430X --data_model=small -On
+#        --multiplier=32 --hw_workaround=CPU40 --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\List\menu.lst
+#    Object file   =  
+#        C:\Users\Ahmed\Desktop\Project 10- New Approach\Project
+#        10\Debug\Obj\menu.r43
+#
+###############################################################################
+
+C:\Users\Ahmed\Desktop\Project 10- New Approach\Project 10\menu.c
+      1          //------------------------------------------------------------------------------
+      2          //
+      3          //  Description: This file contains menu items for thumbhweel
+      4          //
+      5          //
+      6          //  Ahmed Al Mahrooqi
+      7          //  November 2018
+      8          //  Compiler: Built with IAR Embedded Workbench Version: V4.10A/W32 (7.12.1)
+      9          //------------------------------------------------------------------------------
+     10          
+     11          //------------------------------------------------------------------------------
+     12          #include  "msp430.h"
+     13          #include  "functions.h"
+     14          #include  <string.h>
+     15          #include  "macros.h"
+     16          
+     17          extern unsigned int current_thumb;
+     18          extern char option;
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     19          unsigned int i;
+   \                     i:
+   \   000000                DS8 2
+     20          extern volatile unsigned int ADC_Thumb;
+     21          
+     22          
+     23          
+
+   \                                 In  segment CODE, align 2
+     24          void main_menu(void){
+   \                     main_menu:
+     25          
+     26                current_thumb=ADC_Thumb;
+   \   000000   9242........ MOV.W   &ADC_Thumb, &current_thumb
+     27                if(current_thumb < OPTION1_LIMIT){
+   \   000006   B290AB02.... CMP.W   #0x2ab, &current_thumb
+   \   00000C   082C         JC      ??main_menu_0
+     28                 display_string_line(LCD_LINE1," ->Start");
+   \   00000E   3D40....     MOV.W   #`?<Constant " ->Start">`, R13
+   \   000012   1C43         MOV.W   #0x1, R12
+   \   000014   ........     CALLA   #display_string_line
+     29                 option=START;
+   \   000018   F2407300.... MOV.B   #0x73, &option
+     30                }
+     31             
+     32                if(current_thumb >= OPTION1_LIMIT && current_thumb < OPTION2_LIMIT){
+   \                     ??main_menu_0:
+   \   00001E   B290AB02.... CMP.W   #0x2ab, &current_thumb
+   \   000024   0C28         JNC     ??main_menu_1
+   \   000026   B2905605.... CMP.W   #0x556, &current_thumb
+   \   00002C   082C         JC      ??main_menu_1
+     33                 display_string_line(LCD_LINE1," ->Cal Blk");
+   \   00002E   3D40....     MOV.W   #`?<Constant " ->Cal Blk">`, R13
+   \   000032   1C43         MOV.W   #0x1, R12
+   \   000034   ........     CALLA   #display_string_line
+     34                 option =CALB;
+   \   000038   F2404200.... MOV.B   #0x42, &option
+     35                }
+     36                
+     37               if(current_thumb >= OPTION2_LIMIT && current_thumb < OPTION3_LIMIT){
+   \                     ??main_menu_1:
+   \   00003E   B2905605.... CMP.W   #0x556, &current_thumb
+   \   000044   0C28         JNC     ??main_menu_2
+   \   000046   B2900108.... CMP.W   #0x801, &current_thumb
+   \   00004C   082C         JC      ??main_menu_2
+     38                 display_string_line(LCD_LINE1," ->Cal Wht");
+   \   00004E   3D40....     MOV.W   #`?<Constant " ->Cal Wht">`, R13
+   \   000052   1C43         MOV.W   #0x1, R12
+   \   000054   ........     CALLA   #display_string_line
+     39                 option =CALW;
+   \   000058   F2405700.... MOV.B   #0x57, &option
+     40                }
+     41          
+     42               if(current_thumb >= OPTION3_LIMIT && current_thumb < OPTION4_LIMIT){
+   \                     ??main_menu_2:
+   \   00005E   B2900108.... CMP.W   #0x801, &current_thumb
+   \   000064   0C28         JNC     ??main_menu_3
+   \   000066   B290AC0A.... CMP.W   #0xaac, &current_thumb
+   \   00006C   082C         JC      ??main_menu_3
+     43                 display_string_line(LCD_LINE1," ->Show IP");
+   \   00006E   3D40....     MOV.W   #`?<Constant " ->Show IP">`, R13
+   \   000072   1C43         MOV.W   #0x1, R12
+   \   000074   ........     CALLA   #display_string_line
+     44                 option =SHOWIP;
+   \   000078   F2405000.... MOV.B   #0x50, &option
+     45                }
+     46                
+     47                
+     48                if(current_thumb >= OPTION4_LIMIT && current_thumb < OPTION5_LIMIT){
+   \                     ??main_menu_3:
+   \   00007E   B290AC0A.... CMP.W   #0xaac, &current_thumb
+   \   000084   0C28         JNC     ??main_menu_4
+   \   000086   B290570D.... CMP.W   #0xd57, &current_thumb
+   \   00008C   082C         JC      ??main_menu_4
+     49                 display_string_line(LCD_LINE1," ->TCP"); 
+   \   00008E   3D40....     MOV.W   #`?<Constant " ->TCP">`, R13
+   \   000092   1C43         MOV.W   #0x1, R12
+   \   000094   ........     CALLA   #display_string_line
+     50                 option=TCP;
+   \   000098   F2405400.... MOV.B   #0x54, &option
+     51                }
+     52                
+     53                
+     54                if(current_thumb > OPTION5_LIMIT){
+   \                     ??main_menu_4:
+   \   00009E   B290580D.... CMP.W   #0xd58, &current_thumb
+   \   0000A4   0828         JNC     ??main_menu_5
+     55                 display_string_line(LCD_LINE1," ->IoT_RST");
+   \   0000A6   3D40....     MOV.W   #`?<Constant " ->IoT_RST">`, R13
+   \   0000AA   1C43         MOV.W   #0x1, R12
+   \   0000AC   ........     CALLA   #display_string_line
+     56                 option =IOTRST;
+   \   0000B0   F2405200.... MOV.B   #0x52, &option
+     57                }
+     58              
+     59          
+     60          }
+   \                     ??main_menu_5:
+   \   0000B6   1001         RETA
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant " ->Start">`:
+   \   000000   202D3E537461 DC8 " ->Start"
+   \            727400      
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant " ->Cal Blk">`:
+   \   000000   202D3E43616C DC8 " ->Cal Blk"
+   \            20426C6B00  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant " ->Cal Wht">`:
+   \   000000   202D3E43616C DC8 " ->Cal Wht"
+   \            2057687400  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant " ->Show IP">`:
+   \   000000   202D3E53686F DC8 " ->Show IP"
+   \            7720495000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant " ->TCP">`:
+   \   000000   202D3E544350 DC8 " ->TCP"
+   \            00          
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant " ->IoT_RST">`:
+   \   000000   202D3E496F54 DC8 " ->IoT_RST"
+   \            5F52535400  
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   main_menu
+        4   -> display_string_line
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      11  ?<Constant " ->Cal Blk">
+      11  ?<Constant " ->Cal Wht">
+      11  ?<Constant " ->IoT_RST">
+      11  ?<Constant " ->Show IP">
+       9  ?<Constant " ->Start">
+       7  ?<Constant " ->TCP">
+       2  i
+     184  main_menu
+
+ 
+ 184 bytes in segment CODE
+  60 bytes in segment DATA16_C
+   2 bytes in segment DATA16_Z
+ 
+ 184 bytes of CODE  memory
+  60 bytes of CONST memory
+   2 bytes of DATA  memory
+
+Errors: none
+Warnings: none
